@@ -1,0 +1,25 @@
+{
+  "short_name": "إدارة الصلاحية",
+  "name": "إدارة صلاحية المنتجات",
+  "description": "تطبيق بسيط وسريع وسهل الاستخدام لإدارة تواريخ صلاحية المنتجات.",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cdefs%3e%3clinearGradient id='logoGradient' x1='0' y1='0' x2='1' y2='1'%3e%3cstop offset='0%25' stop-color='%2338bdf8'/%3e%3cstop offset='100%25' stop-color='%230ea5e9'/%3e%3c/linearGradient%3e%3c/defs%3e%3cpath d='M8 4H16C18.2091 4 20 5.79086 20 8V16C20 18.2091 18.2091 20 16 20H8C5.79086 20 4 18.2091 4 16V8C4 5.79086 5.79086 4 8 4Z' fill='url(%23logoGradient)'/%3e%3cpath d='M9 8V16' stroke='white' stroke-width='2' stroke-linecap='round'/%3e%3cpath d='M15 8H9' stroke='white' stroke-width='2' stroke-linecap='round'/%3e%3cpath d='M14 12H9' stroke='white' stroke-width='2' stroke-linecap='round'/%3e%3cpath d='M15 16H9' stroke='white' stroke-width='2' stroke-linecap='round'/%3e%3c/svg%3e",
+      "type": "image/svg+xml",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cdefs%3e%3clinearGradient id='logoGradient' x1='0' y1='0' x2='1' y2='1'%3e%3cstop offset='0%25' stop-color='%2338bdf8'/%3e%3cstop offset='100%25' stop-color='%230ea5e9'/%3e%3c/linearGradient%3e%3c/defs%3e%3cpath d='M8 4H16C18.2091 4 20 5.79086 20 8V16C20 18.2091 18.2091 20 16 20H8C5.79086 20 4 18.2091 4 16V8C4 5.79086 5.79086 4 8 4Z' fill='url(%23logoGradient)'/%3e%3cpath d='M9 8V16' stroke='white' stroke-width='2' stroke-linecap='round'/%3e%3cpath d='M15 8H9' stroke='white' stroke-width='2' stroke-linecap='round'/%3e%3cpath d='M14 12H9' stroke='white' stroke-width='2' stroke-linecap='round'/%3e%3cpath d='M15 16H9' stroke='white' stroke-width='2' stroke-linecap='round'/%3e%3c/svg%3e",
+      "type": "image/svg+xml",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#0ea5e9",
+  "background_color": "#f8fafc"
+}

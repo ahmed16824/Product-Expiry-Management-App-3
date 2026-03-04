@@ -1,0 +1,7 @@
+{
+  "name": "Remix: Remix: Product Expiry Management App",
+  "description": "A simple, fast, and easy-to-use application for managing product expiry dates, designed for both mobile and desktop use. It features a dashboard with quick stats, product management with filtering and status indicators, and forms for adding or editing products, including an option for barcode scanning.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
