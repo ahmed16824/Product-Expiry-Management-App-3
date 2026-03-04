@@ -6,6 +6,7 @@ import { useToaster } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { GoogleGenAI } from "@google/genai";
 import BarcodeScanner from './BarcodeScanner';
+import { ScanBarcode, Wand2, QrCode } from 'lucide-react';
 
 interface ProductFormProps {
   onSave: (product: Product) => void;
@@ -153,9 +154,16 @@ const ProductForm: React.FC<ProductFormProps> = ({ onSave, onClose, productToEdi
     setIsInlineScannerOpen(false);
   };
 
+  const generateBarcode = () => {
+    const timestamp = Date.now().toString();
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    const code = `${timestamp.slice(-9)}${random}`;
+    setProduct(prev => ({ ...prev, code }));
+    // Trigger lookup just in case (though unlikely to find a random code)
+    // lookupProductByCode(code); 
+  };
+
   const inputBaseClasses = "mt-1 block w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm";
-  const codeInputClassName = `focus:ring-sky-500 focus:border-sky-500 flex-1 block w-full sm:text-sm border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 ${direction === 'rtl' ? 'rounded-none rounded-r-md' : 'rounded-none rounded-l-md'}`;
-  const cameraButtonClassName = `inline-flex items-center px-3 border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 text-sm hover:bg-slate-100 dark:hover:bg-slate-600 ${direction === 'rtl' ? 'rounded-l-md border-r-0 dark:border-l-slate-600 dark:border-r-0' : 'rounded-r-md border-l-0 dark:border-r-slate-600 dark:border-l-0'}`;
   const dateInputClassName = `focus:ring-sky-500 focus:border-sky-500 flex-1 block w-full sm:text-sm border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 dark:[color-scheme:dark] ${direction === 'rtl' ? 'rounded-none rounded-r-md' : 'rounded-none rounded-l-md'}`;
 
   return (
@@ -267,46 +275,57 @@ const ProductForm: React.FC<ProductFormProps> = ({ onSave, onClose, productToEdi
       </div>
        
       <div>
-        <label htmlFor="code" className="block text-sm font-medium text-slate-700 dark:text-slate-300">{t('codeLabel')}</label>
-        <div className="mt-1 flex rounded-md shadow-sm relative">
-           {direction === 'rtl' ? (
-            <>
-              <input type="text" name="code" id="code" value={product.code} onChange={handleChange} className={codeInputClassName} required />
-              <button type="button" onClick={() => setIsInlineScannerOpen(!isInlineScannerOpen)} className={cameraButtonClassName}>
-                {isSearchingProduct ? (
-                  <div className="w-5 h-5 border-2 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
-                ) : (
-                  <CameraIcon className="w-5 h-5" />
-                )}
-              </button>
-            </>
-          ) : (
-            <>
-              <button type="button" onClick={() => setIsInlineScannerOpen(!isInlineScannerOpen)} className={cameraButtonClassName}>
-                {isSearchingProduct ? (
-                  <div className="w-5 h-5 border-2 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
-                ) : (
-                  <CameraIcon className="w-5 h-5" />
-                )}
-              </button>
-              <input type="text" name="code" id="code" value={product.code} onChange={handleChange} className={codeInputClassName} required />
-            </>
-          )}
-          {isSearchingProduct && (
-            <div className="absolute inset-0 bg-white/60 dark:bg-slate-800/60 backdrop-blur-[1px] flex items-center justify-center rounded-md z-10">
-              <div className="flex items-center gap-2 px-3 py-1 bg-white dark:bg-slate-700 rounded-full shadow-sm border border-slate-200 dark:border-slate-600">
-                <div className="w-3 h-3 border-2 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest">{t('searching') || 'Searching...'}</span>
-              </div>
+        <label htmlFor="code" className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">{t('codeLabel')}</label>
+        <div className="flex gap-2 items-stretch">
+          <div className="relative flex-1">
+            <input
+                type="text"
+                name="code"
+                id="code"
+                value={product.code}
+                onChange={handleChange}
+                className={`block w-full py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all font-mono text-sm tracking-wider ${direction === 'rtl' ? 'pr-10 pl-3' : 'pl-10 pr-3'}`}
+                placeholder={t('scanOrEnterCode') || 'Scan or enter barcode'}
+                required
+            />
+            <div className={`absolute inset-y-0 flex items-center pointer-events-none ${direction === 'rtl' ? 'right-0 pr-3' : 'left-0 pl-3'}`}>
+                <ScanBarcode className="h-5 w-5 text-slate-400" />
             </div>
-          )}
+            {isSearchingProduct && (
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                    <div className="w-4 h-4 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+            )}
+          </div>
+          
+          <button
+              type="button"
+              onClick={() => setIsInlineScannerOpen(!isInlineScannerOpen)}
+              className={`px-3 rounded-xl border transition-all active:scale-95 flex items-center justify-center gap-2 ${isInlineScannerOpen ? 'bg-brand-100 border-brand-200 text-brand-600' : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
+              title={t('scanBarcode') || 'Scan Barcode'}
+          >
+              <QrCode className="w-5 h-5" />
+              <span className="hidden sm:inline text-xs font-bold uppercase tracking-wider">{t('scan') || 'Scan'}</span>
+          </button>
+          
+          <button
+              type="button"
+              onClick={generateBarcode}
+              className="px-3 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all active:scale-95 flex items-center justify-center"
+              title={t('generateBarcode') || 'Generate Random Barcode'}
+          >
+              <Wand2 className="w-5 h-5" />
+          </button>
         </div>
+        
         {isInlineScannerOpen && (
-          <BarcodeScanner 
-            isInline={true} 
-            onScanSuccess={handleInlineScanSuccess} 
-            onClose={() => setIsInlineScannerOpen(false)} 
-          />
+          <div className="mt-3 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg">
+             <BarcodeScanner 
+                isInline={true} 
+                onScanSuccess={handleInlineScanSuccess} 
+                onClose={() => setIsInlineScannerOpen(false)} 
+             />
+          </div>
         )}
       </div>
       

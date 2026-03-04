@@ -65,7 +65,7 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanSuccess, onClose,
     setError(null);
 
     const config = {
-      fps: 20,
+      fps: 30,
       qrbox: isInline ? { width: 250, height: 150 } : { width: 280, height: 180 },
       aspectRatio: 1.0,
     };
@@ -79,7 +79,7 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanSuccess, onClose,
         (decodedText) => {
           setSuccessFlash(true);
           if ('vibrate' in navigator) {
-            navigator.vibrate(150);
+            navigator.vibrate(200);
           }
           if ((window as any).playScanBeep) {
             (window as any).playScanBeep();
@@ -126,20 +126,27 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanSuccess, onClose,
 
   useEffect(() => {
     // Initialize beep sound
-    beepRef.current = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=");
-    // The above is a silent placeholder, let's use a real beep
     const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
     const playBeep = () => {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
       const oscillator = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
+      
       oscillator.connect(gainNode);
       gainNode.connect(audioCtx.destination);
+      
+      // Success "ding" sound
       oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
-      gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+      oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.15);
+      
+      gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+      
       oscillator.start();
-      oscillator.stop(audioCtx.currentTime + 0.1);
+      oscillator.stop(audioCtx.currentTime + 0.15);
     };
     (window as any).playScanBeep = playBeep;
 
@@ -234,52 +241,57 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanSuccess, onClose,
   };
 
   const ScannerOverlay = () => (
-    <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center">
-      {/* Scanning Box */}
-      <div className={`relative ${isInline ? 'w-64 h-40' : 'w-72 h-48'} border-2 border-white/30 rounded-3xl overflow-hidden`}>
-        {/* Corners */}
-        <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-brand-500 rounded-tl-xl"></div>
-        <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-brand-500 rounded-tr-xl"></div>
-        <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-brand-500 rounded-bl-xl"></div>
-        <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-brand-500 rounded-br-xl"></div>
+    <div className="absolute inset-0 pointer-events-none z-10 flex flex-col">
+      {/* Top Backdrop */}
+      <div className="flex-1 bg-black/60 backdrop-blur-[2px]"></div>
+      
+      <div className="flex w-full" style={{ height: isInline ? '180px' : '280px' }}>
+        {/* Left Backdrop */}
+        <div className="flex-1 bg-black/60 backdrop-blur-[2px]"></div>
         
-        {/* Laser Line */}
-        <motion.div 
-          animate={{ top: ['10%', '90%', '10%'] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          className="absolute left-0 right-0 h-1 bg-brand-500 shadow-[0_0_15px_rgba(2,132,199,0.8)] z-10"
-        />
+        {/* Scanning Area */}
+        <div className={`relative ${isInline ? 'w-full max-w-[280px]' : 'w-72'} h-full bg-transparent mx-auto overflow-hidden rounded-3xl`}>
+           {/* Success Flash */}
+           <AnimatePresence>
+             {successFlash && (
+               <motion.div 
+                 initial={{ opacity: 0 }}
+                 animate={{ opacity: 1 }}
+                 exit={{ opacity: 0 }}
+                 className="absolute inset-0 bg-emerald-500/20 z-30 flex items-center justify-center backdrop-blur-[1px]"
+               >
+                 <div className="bg-white rounded-full p-3 shadow-xl">
+                   <Scan className="w-8 h-8 text-emerald-600" />
+                 </div>
+               </motion.div>
+             )}
+           </AnimatePresence>
+        </div>
         
-        {/* Success Flash */}
-        <AnimatePresence>
-          {successFlash && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-white/40 z-20 flex items-center justify-center"
-            >
-              <div className="bg-white rounded-full p-3 shadow-lg">
-                <Scan className="w-8 h-8 text-brand-600" />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Right Backdrop */}
+        <div className="flex-1 bg-black/60 backdrop-blur-[2px]"></div>
       </div>
       
-      {!isInline && (
-        <div className="mt-8 flex flex-col items-center gap-4">
-          <p className="text-white/80 text-sm font-medium tracking-wide bg-black/40 px-4 py-2 rounded-full backdrop-blur-sm">
-            {t('barcodeScannerPrompt')}
-          </p>
-          <button 
+      {/* Bottom Backdrop */}
+      <div className="flex-1 bg-black/60 backdrop-blur-[2px] flex flex-col items-center pt-8 relative">
+        {!isInline && (
+          <div className="bg-black/40 backdrop-blur-md px-6 py-3 rounded-full border border-white/10 shadow-xl">
+            <p className="text-white text-sm font-medium tracking-wide flex items-center gap-2">
+              <Scan className="w-4 h-4 text-brand-400" />
+              {t('barcodeScannerPrompt')}
+            </p>
+          </div>
+        )}
+        
+        {!isInline && (
+           <button 
             onClick={() => setIsManualInputOpen(true)}
-            className="text-white/60 text-xs font-bold uppercase tracking-widest hover:text-white transition-colors underline underline-offset-4 pointer-events-auto"
+            className="mt-6 text-white/60 text-xs font-bold uppercase tracking-widest hover:text-white transition-colors underline underline-offset-4 pointer-events-auto"
           >
-            {t('manualEntry') || 'Manual Entry'}
+            {t('manualEntry') || 'MANUAL ENTRY'}
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 

@@ -6,7 +6,7 @@ import { ProductsIcon, CheckCircleIcon, ExclamationTriangleIcon, XCircleIcon, Pe
 import { useSettings } from '../context/SettingsContext';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'motion/react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 import { LayoutGrid, List, BarChart3, PieChart as PieChartIcon, ArrowUpDown, CheckSquare, Square, Trash2 } from 'lucide-react';
 import { exportProductsToExcel } from '../utils/excelExport';
 
@@ -117,7 +117,7 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
   ].filter(d => d.value > 0);
 
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('table');
-  const [showCharts, setShowCharts] = useState(false);
+  const [showCharts, setShowCharts] = useState(true);
 
   const handleExportToStyledExcel = () => {
     const productsToExport = filteredProducts
@@ -157,22 +157,33 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
         <div className="flex items-center gap-2">
            <button 
               onClick={() => setShowCharts(!showCharts)}
-              className={`p-2.5 rounded-xl border transition-all ${showCharts ? 'bg-brand-100 border-brand-200 text-brand-600 dark:bg-brand-900/30 dark:border-brand-800' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400'}`}
+              className={`
+                relative group p-2.5 rounded-xl border transition-all duration-300 overflow-hidden
+                ${showCharts 
+                  ? 'border-brand-500/50 text-white shadow-lg shadow-brand-500/25 ring-2 ring-brand-500/20' 
+                  : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-brand-300 dark:hover:border-brand-700 hover:text-brand-600 dark:hover:text-brand-400 hover:shadow-md'
+                }
+              `}
               title={t('toggleCharts') || 'Toggle Charts'}
            >
-             <BarChart3 className="w-5 h-5" />
+             {showCharts && (
+               <div className="absolute inset-0 bg-gradient-to-br from-brand-500 to-brand-600 opacity-100 transition-opacity" />
+             )}
+             <div className="relative z-10">
+               <BarChart3 className={`w-5 h-5 transition-transform duration-300 ${showCharts ? 'scale-110' : 'group-hover:scale-110'}`} strokeWidth={2.5} />
+             </div>
            </button>
            <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-700 mx-1"></div>
            <button 
               onClick={handleExportToStyledExcel} 
-              className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all active:scale-95"
+              className="group p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-200 dark:hover:border-emerald-800 transition-all active:scale-95 hover:shadow-md"
               title={t('exportExcelReport')}
            >
-             <DownloadIcon className="w-5 h-5" />
+             <DownloadIcon className="w-5 h-5 transition-transform duration-300 group-hover:-translate-y-0.5" strokeWidth={2.5} />
            </button>
            <button 
               onClick={onAddProduct} 
-              className="btn-primary flex items-center gap-2"
+              className="btn-primary hidden md:flex items-center gap-2"
            >
              <PlusIcon className="w-5 h-5" />
              <span className="hidden sm:inline">{t('addNewProduct')}</span>
@@ -223,62 +234,104 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
 
       {/* Charts Section */}
       <AnimatePresence>
-        {showCharts && products.length > 0 && (
+        {showCharts && (
           <motion.div 
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <div className="lg:col-span-1 glass-card p-4 rounded-2xl">
-                <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">{t('statusDistribution') || 'Status Distribution'}</h3>
-                <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={chartData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={80}
-                        paddingAngle={5}
-                        dataKey="value"
-                      >
-                        {chartData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip 
-                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
+            {products.length > 0 ? (
+              <div className="glass-card p-6 md:p-8 rounded-3xl mb-6">
+                <div className="flex items-center justify-between mb-8">
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-white">{t('inventoryStatus') || 'Inventory Status'}</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{t('realtimeOverview') || 'Real-time overview of product expiration'}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                  {/* Chart Column */}
+                  <div className="h-64 relative">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <defs>
+                          {chartData.map((entry, index) => (
+                            <linearGradient key={`gradient-${index}`} id={`gradient-${index}`} x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor={entry.color} stopOpacity={1}/>
+                              <stop offset="100%" stopColor={entry.color} stopOpacity={0.6}/>
+                            </linearGradient>
+                          ))}
+                        </defs>
+                        <Pie
+                          data={chartData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={80}
+                          outerRadius={110}
+                          paddingAngle={5}
+                          dataKey="value"
+                          stroke="none"
+                          cornerRadius={8}
+                        >
+                          {chartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={`url(#gradient-${index})`} className="drop-shadow-xl" />
+                          ))}
+                        </Pie>
+                        <Tooltip 
+                          contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', backgroundColor: 'rgba(255, 255, 255, 0.95)', padding: '12px' }}
+                          itemStyle={{ color: '#1e293b', fontWeight: 700, fontSize: '14px' }}
+                          cursor={false}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                      <span className="text-5xl font-black text-slate-900 dark:text-white font-display tracking-tight">{products.length}</span>
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">{t('totalProducts') || 'Total Products'}</span>
+                    </div>
+                  </div>
+
+                  {/* Stats Breakdown Column */}
+                  <div className="space-y-6">
+                    {chartData.map((item, index) => {
+                      const percentage = Math.round((item.value / products.length) * 100);
+                      return (
+                        <div key={index} className="group">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-3">
+                              <div className="w-3 h-3 rounded-full shadow-lg shadow-current" style={{ backgroundColor: item.color }}></div>
+                              <span className="font-bold text-slate-700 dark:text-slate-200 text-sm">{item.name}</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className="text-sm font-bold text-slate-900 dark:text-white">{item.value}</span>
+                              <span className="text-xs font-medium text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">{percentage}%</span>
+                            </div>
+                          </div>
+                          <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                            <motion.div 
+                              initial={{ width: 0 }}
+                              animate={{ width: `${percentage}%` }}
+                              transition={{ duration: 1, delay: 0.2 }}
+                              className="h-full rounded-full"
+                              style={{ backgroundColor: item.color }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-              
-              <div className="lg:col-span-2 glass-card p-4 rounded-2xl">
-                <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">{t('expiryOverview') || 'Expiry Overview'}</h3>
-                <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                      <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                      <Tooltip 
-                        cursor={{ fill: '#f1f5f9' }}
-                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                      />
-                      <Bar dataKey="value" radius={[6, 6, 0, 0]}>
-                        {chartData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
+            ) : (
+              <div className="glass-card p-8 rounded-2xl text-center mb-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 mb-4">
+                  <BarChart3 className="w-8 h-8 text-slate-400" />
                 </div>
+                <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200 mb-2">{t('noDataForCharts') || 'No Data Available'}</h3>
+                <p className="text-slate-500 dark:text-slate-400 text-sm">{t('addProductsToSeeCharts') || 'Add products to see statistics and insights.'}</p>
               </div>
-            </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -586,6 +639,24 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
             </div>
          )}
       </div>
+      {/* Floating Add Product Button */}
+      <AnimatePresence>
+        {selectedIds.length === 0 && (
+          <motion.button
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={onAddProduct}
+            className={`fixed bottom-24 ${direction === 'rtl' ? 'left-6' : 'right-6'} z-40 w-14 h-14 bg-brand-600 text-white rounded-full shadow-xl shadow-brand-500/30 hover:bg-brand-700 transition-all duration-300 flex items-center justify-center md:hidden`}
+            aria-label={t('addNewProduct')}
+          >
+            <PlusIcon className="w-8 h-8" />
+          </motion.button>
+        )}
+      </AnimatePresence>
+
       {/* Bulk Actions Bar */}
       <AnimatePresence>
         {selectedIds.length > 0 && (
