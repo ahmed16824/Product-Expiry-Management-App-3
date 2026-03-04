@@ -296,7 +296,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onSave, onClose, productToEdi
             <div className="absolute inset-0 bg-white/60 dark:bg-slate-800/60 backdrop-blur-[1px] flex items-center justify-center rounded-md z-10">
               <div className="flex items-center gap-2 px-3 py-1 bg-white dark:bg-slate-700 rounded-full shadow-sm border border-slate-200 dark:border-slate-600">
                 <div className="w-3 h-3 border-2 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest">{t('searching') || 'Searching...'}</span>
+                <span className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest">{t('searching') || 'Searching...'}</span>
               </div>
             </div>
           )}

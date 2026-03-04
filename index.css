@@ -34,11 +34,11 @@
   }
   
   .btn-primary {
-    @apply bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-2xl transition-all active:scale-95 shadow-lg shadow-brand-500/20 font-bold tracking-tight;
+    @apply bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-xl transition-all active:scale-95 shadow-lg shadow-brand-500/20 font-bold tracking-tight text-sm;
   }
 
   .input-field {
-    @apply w-full px-4 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all duration-200 placeholder:text-slate-400 dark:placeholder:text-slate-600;
+    @apply w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all duration-200 placeholder:text-slate-400 dark:placeholder:text-slate-600;
   }
 }
 

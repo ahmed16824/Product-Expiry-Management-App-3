@@ -100,8 +100,8 @@ const Notifications: React.FC<NotificationsProps> = ({
                     {systemNotifications.length > 0 && (
                       <div className="pb-2">
                         <div className="flex justify-between items-center px-5 py-3 bg-slate-50/50 dark:bg-slate-800/30 sticky top-0 z-10 backdrop-blur-sm">
-                          <h4 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('systemAlerts')}</h4>
-                          <button onClick={onClearSystemNotifications} className="text-[10px] font-black text-brand-600 dark:text-brand-400 hover:underline uppercase tracking-widest">{t('clearAll')}</button>
+                          <h4 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('systemAlerts')}</h4>
+                          <button onClick={onClearSystemNotifications} className="text-xs font-black text-brand-600 dark:text-brand-400 hover:underline uppercase tracking-widest">{t('clearAll')}</button>
                         </div>
                         <ul className="divide-y divide-slate-50 dark:divide-slate-800">
                           {systemNotifications.map(notif => (
@@ -121,7 +121,7 @@ const Notifications: React.FC<NotificationsProps> = ({
                     {productNotifications.length > 0 && (
                        <div>
                           <div className="px-5 py-3 bg-slate-50/50 dark:bg-slate-800/30 sticky top-0 z-10 backdrop-blur-sm">
-                              <h4 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('productExpiryAlerts')}</h4>
+                              <h4 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('productExpiryAlerts')}</h4>
                           </div>
                           <ul className="divide-y divide-slate-50 dark:divide-slate-800">
                             {productNotifications.map(notification => {

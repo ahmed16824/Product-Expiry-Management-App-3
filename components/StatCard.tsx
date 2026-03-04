@@ -28,7 +28,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color, onClick,
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
       className={`
-        relative w-full p-6 glass-card rounded-[32px] flex flex-col gap-4
+        relative w-full p-3 glass-card rounded-2xl flex flex-col gap-2
         transition-all duration-300
         focus:outline-none overflow-hidden
         ${isActive ? `ring-2 ring-brand-500 shadow-2xl ${styles.shadow}` : 'hover:shadow-xl'}
@@ -39,15 +39,15 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color, onClick,
         <div className={`absolute top-0 ${direction === 'rtl' ? 'right-0' : 'left-0'} w-1.5 h-full ${styles.accent}`}></div>
       )}
       
-      <div className={`w-14 h-14 flex items-center justify-center rounded-2xl ${styles.bg} ${styles.darkBg} transition-all`}>
+      <div className={`w-10 h-10 flex items-center justify-center rounded-xl ${styles.bg} ${styles.darkBg} transition-all`}>
         <div className={styles.text}>
             {icon}
         </div>
       </div>
 
       <div>
-        <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">{title}</p>
-        <p className="text-4xl font-black text-slate-900 dark:text-white tracking-tight font-display">{value}</p>
+        <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-0.5">{title}</p>
+        <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tight font-display">{value}</p>
       </div>
     </motion.button>
   );

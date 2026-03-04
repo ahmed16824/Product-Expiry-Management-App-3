@@ -83,11 +83,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ users, onSignUp }) => {
             </div>
         )}
         <div>
-            <label className="block mb-2 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest" htmlFor="username">{t('username')}</label>
+            <label className="block mb-2 text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest" htmlFor="username">{t('username')}</label>
             <input id="username" className="input-field" type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
         </div>
         <div>
-            <label className="block mb-2 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest" htmlFor="password">{t('password')}</label>
+            <label className="block mb-2 text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest" htmlFor="password">{t('password')}</label>
             <input id="password" className="input-field" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
         <div className="pt-2">
@@ -106,25 +106,25 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ users, onSignUp }) => {
       className="mt-8 space-y-5"
     >
         <div>
-            <label className="block mb-2 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest" htmlFor="organization-name">{t('organizationNameLabel')}</label>
+            <label className="block mb-2 text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest" htmlFor="organization-name">{t('organizationNameLabel')}</label>
             <input id="organization-name" className="input-field" type="text" value={organizationName} onChange={(e) => setOrganizationName(e.target.value)} required />
         </div>
         <div>
-            <label className="block mb-2 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest" htmlFor="new-username">{t('username')}</label>
+            <label className="block mb-2 text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest" htmlFor="new-username">{t('username')}</label>
             <input id="new-username" className="input-field" type="text" value={newUsername} onChange={(e) => setNewUsername(e.target.value)} required />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-              <label className="block mb-2 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest" htmlFor="new-password">{t('password')}</label>
+              <label className="block mb-2 text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest" htmlFor="new-password">{t('password')}</label>
               <input id="new-password" className="input-field" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
           </div>
           <div>
-              <label className="block mb-2 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest" htmlFor="confirm-password">{t('confirmPassword')}</label>
+              <label className="block mb-2 text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest" htmlFor="confirm-password">{t('confirmPassword')}</label>
               <input id="confirm-password" className="input-field" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
           </div>
         </div>
         <div>
-            <label className="block mb-2 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest" htmlFor="role-select">{t('role')}</label>
+            <label className="block mb-2 text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest" htmlFor="role-select">{t('role')}</label>
             <select id="role-select" value={newUserRole} onChange={(e) => setNewUserRole(e.target.value as Role)} className="input-field">
                 {Object.values(Role).map(roleValue => (
                     <option key={roleValue} value={roleValue}>{t(roleValue)}</option>

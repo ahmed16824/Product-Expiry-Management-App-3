@@ -133,14 +133,14 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
   }
   
   return (
-    <div className="space-y-8 pb-20">
+    <div className="space-y-4 pb-20">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
         <div>
           <motion.h1 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="text-4xl font-black tracking-tight text-slate-900 dark:text-white font-display"
+            className="text-2xl font-black tracking-tight text-slate-900 dark:text-white font-display"
           >
             {t('dashboardTitle') || 'Dashboard'}
           </motion.h1>
@@ -185,7 +185,7 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
+        className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4"
       >
         <StatCard 
             title={t('allProducts')}
@@ -230,8 +230,8 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-1 glass-card p-6 rounded-3xl">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div className="lg:col-span-1 glass-card p-4 rounded-2xl">
                 <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">{t('statusDistribution') || 'Status Distribution'}</h3>
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
@@ -257,7 +257,7 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
                 </div>
               </div>
               
-              <div className="lg:col-span-2 glass-card p-6 rounded-3xl">
+              <div className="lg:col-span-2 glass-card p-4 rounded-2xl">
                 <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">{t('expiryOverview') || 'Expiry Overview'}</h3>
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
@@ -284,23 +284,23 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
       </AnimatePresence>
 
       {/* Search and Filters */}
-      <div className="glass-card p-2 rounded-2xl flex flex-col md:flex-row gap-2 items-center">
+      <div className="glass-card p-1.5 rounded-xl flex flex-col md:flex-row gap-2 items-center">
         <div className="relative flex-1 w-full">
-          <div className={`absolute inset-y-0 flex items-center pointer-events-none ${direction === 'rtl' ? 'right-4' : 'left-4'}`}>
-            <MagnifyingGlassIcon className="w-5 h-5 text-slate-400" />
+          <div className={`absolute inset-y-0 flex items-center pointer-events-none ${direction === 'rtl' ? 'right-3' : 'left-3'}`}>
+            <MagnifyingGlassIcon className="w-4 h-4 text-slate-400" />
           </div>
           <input
             type="text"
             placeholder={t('searchProductsDashboard')}
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className={`w-full py-3 px-12 bg-transparent border-none focus:ring-0 text-slate-700 dark:text-slate-200 placeholder-slate-400`}
+            className={`w-full py-2 px-10 bg-transparent border-none focus:ring-0 text-slate-700 dark:text-slate-200 placeholder-slate-400 text-sm`}
           />
         </div>
         
-        <div className="flex items-center gap-1 p-1 bg-slate-100 dark:bg-slate-900/50 rounded-xl w-full md:w-auto">
+        <div className="flex items-center gap-1 p-1 bg-slate-100 dark:bg-slate-900/50 rounded-lg w-full md:w-auto">
           <div className="flex items-center px-2 gap-2 border-r border-slate-200 dark:border-slate-700 mr-1">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">{t('sortBy')}:</span>
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">{t('sortBy')}:</span>
             <select 
               value={sortBy} 
               onChange={(e) => setSortBy(e.target.value as any)}
@@ -344,24 +344,24 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
            </div>
         </div>
 
-        <div className="glass-card rounded-3xl overflow-hidden">
+        <div className="glass-card rounded-2xl overflow-hidden">
           {viewMode === 'table' ? (
             /* Desktop Table View */
             <div className="hidden md:block overflow-x-auto">
                 <table className="min-w-full">
                 <thead className="bg-slate-50/50 dark:bg-slate-900/30 border-b border-slate-200 dark:border-slate-800">
                     <tr>
-                    <th className="px-6 py-4 w-10">
+                    <th className="px-4 py-2 w-10">
                       <button onClick={toggleSelectAll} className="text-slate-400 hover:text-brand-500 transition-colors">
                         {selectedIds.length === sortedProducts.length && sortedProducts.length > 0 ? (
-                          <CheckSquare className="w-5 h-5 text-brand-500" />
+                          <CheckSquare className="w-4 h-4 text-brand-500" />
                         ) : (
-                          <Square className="w-5 h-5" />
+                          <Square className="w-4 h-4" />
                         )}
                       </button>
                     </th>
                     {[t('productName'), t('companyName'), t('branchName'), t('code'), t('expiryDate'), t('daysRemaining'), t('status'), t('actions')].map(header => (
-                        <th key={header} scope="col" className={`px-6 py-4 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
+                        <th key={header} scope="col" className={`px-4 py-2 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
                         {header}
                         </th>
                     ))}
@@ -370,7 +370,7 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
                 {Object.keys(groupedProducts).sort().map(companyName => (
                     <tbody key={companyName} className="divide-y divide-slate-100 dark:divide-slate-800/50">
                         <tr className="bg-slate-50/30 dark:bg-slate-900/20">
-                            <th colSpan={9} className={`px-6 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
+                            <th colSpan={9} className={`px-4 py-2 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
                                 <div className="flex items-center gap-2">
                                     <span className="text-brand-500 opacity-50">#</span>
                                     {companyName}
@@ -389,21 +389,21 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
                                   key={product.id} 
                                   className={`${rowClass} transition-colors duration-200 ${selectedIds.includes(product.id) ? 'ring-1 ring-inset ring-brand-500 bg-brand-50/30 dark:bg-brand-900/10' : ''}`}
                                 >
-                                    <td className="px-6 py-4">
+                                    <td className="px-4 py-2">
                                       <button onClick={() => toggleSelectProduct(product.id)} className="text-slate-400 hover:text-brand-500 transition-colors">
                                         {selectedIds.includes(product.id) ? (
-                                          <CheckSquare className="w-5 h-5 text-brand-500" />
+                                          <CheckSquare className="w-4 h-4 text-brand-500" />
                                         ) : (
-                                          <Square className="w-5 h-5" />
+                                          <Square className="w-4 h-4" />
                                         )}
                                       </button>
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-800 dark:text-slate-200">{product.name}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{product.company || t('unknown')}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{product.branchName || '-'}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-xs font-mono text-slate-400">{product.code}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-700 dark:text-slate-300">{product.expiryDate}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                    <td className="px-4 py-2 whitespace-nowrap text-sm font-bold text-slate-800 dark:text-slate-200">{product.name}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400">{product.company || t('unknown')}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400">{product.branchName || '-'}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-[10px] font-mono text-slate-400">{product.code}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-xs font-medium text-slate-700 dark:text-slate-300">{product.expiryDate}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-xs">
                                       {(() => {
                                         const days = getDaysRemaining(product.expiryDate);
                                         return (
@@ -413,17 +413,17 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
                                         );
                                       })()}
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                        <span className={`px-3 py-1 inline-flex items-center gap-1.5 text-[10px] font-bold rounded-full uppercase tracking-wider ${badge}`}>
-                                            <div className="w-1.5 h-1.5 rounded-full bg-current"></div>
+                                    <td className="px-4 py-2 whitespace-nowrap text-xs">
+                                        <span className={`px-2 py-0.5 inline-flex items-center gap-1 text-[10px] font-bold rounded-full uppercase tracking-wider ${badge}`}>
+                                            <div className="w-1 h-1 rounded-full bg-current"></div>
                                             {t(product.status)}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <div className={`flex items-center gap-2 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
-                                            <button onClick={() => onEditProduct(product)} className="p-2 text-slate-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-900/20 rounded-lg transition-all"><PencilIcon className="w-4 h-4" /></button>
+                                    <td className="px-4 py-2 whitespace-nowrap text-xs font-medium">
+                                        <div className={`flex items-center gap-1 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
+                                            <button onClick={() => onEditProduct(product)} className="p-1.5 text-slate-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-900/20 rounded-lg transition-all"><PencilIcon className="w-3.5 h-3.5" /></button>
                                             {currentUser?.role !== Role.Employee && (
-                                              <button onClick={() => onDeleteProduct(product.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"><TrashIcon className="w-4 h-4" /></button>
+                                              <button onClick={() => onDeleteProduct(product.id)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"><TrashIcon className="w-3.5 h-3.5" /></button>
                                             )}
                                         </div>
                                     </td>
@@ -436,51 +436,51 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
             </div>
           ) : (
             /* Grid View */
-            <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                {sortedProducts.map(product => {
                   const { badge } = getStatusStyles(product.status);
                   return (
                     <motion.div 
                       layout
                       key={product.id}
-                      className={`glass-card p-5 rounded-3xl relative overflow-hidden group hover:shadow-xl hover:shadow-brand-500/5 transition-all ${selectedIds.includes(product.id) ? 'ring-2 ring-brand-500' : ''}`}
+                      className={`glass-card p-3 rounded-xl relative overflow-hidden group hover:shadow-xl hover:shadow-brand-500/5 transition-all ${selectedIds.includes(product.id) ? 'ring-2 ring-brand-500' : ''}`}
                     >
-                      <div className="flex justify-between items-start mb-4">
+                      <div className="flex justify-between items-start mb-3">
                         <div className="flex items-center gap-2">
                           <button onClick={() => toggleSelectProduct(product.id)} className="text-slate-400 hover:text-brand-500 transition-colors">
                             {selectedIds.includes(product.id) ? (
-                              <CheckSquare className="w-5 h-5 text-brand-500" />
+                              <CheckSquare className="w-4 h-4 text-brand-500" />
                             ) : (
-                              <Square className="w-5 h-5" />
+                              <Square className="w-4 h-4" />
                             )}
                           </button>
-                          <div className={`px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest ${badge}`}>
+                          <div className={`px-1.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-widest ${badge}`}>
                             {t(product.status)}
                           </div>
                         </div>
                         <div className="flex gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                          <button onClick={() => onEditProduct(product)} className="p-1.5 text-slate-400 hover:text-brand-600 bg-white/50 dark:bg-slate-800/50 rounded-lg"><PencilIcon className="w-4 h-4" /></button>
+                          <button onClick={() => onEditProduct(product)} className="p-1 text-slate-400 hover:text-brand-600 bg-white/50 dark:bg-slate-800/50 rounded-lg"><PencilIcon className="w-3.5 h-3.5" /></button>
                           {currentUser?.role !== Role.Employee && (
-                            <button onClick={() => onDeleteProduct(product.id)} className="p-1.5 text-slate-400 hover:text-red-600 bg-white/50 dark:bg-slate-800/50 rounded-lg"><TrashIcon className="w-4 h-4" /></button>
+                            <button onClick={() => onDeleteProduct(product.id)} className="p-1 text-slate-400 hover:text-red-600 bg-white/50 dark:bg-slate-800/50 rounded-lg"><TrashIcon className="w-3.5 h-3.5" /></button>
                           )}
                         </div>
                       </div>
-                      <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-1">{product.name}</h4>
-                      <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{product.company || t('unknown')}</p>
+                      <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-0.5">{product.name}</h4>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">{product.company || t('unknown')}</p>
                       
-                      <div className="grid grid-cols-3 gap-4 border-t border-slate-100 dark:border-slate-800 pt-4">
+                      <div className="grid grid-cols-3 gap-3 border-t border-slate-100 dark:border-slate-800 pt-3">
                         <div>
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{t('expiryDate')}</span>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">{t('expiryDate')}</span>
                           <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{product.expiryDate}</span>
                         </div>
                         <div>
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{t('daysRemaining')}</span>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">{t('daysRemaining')}</span>
                           <span className={`text-sm font-bold ${getDaysRemaining(product.expiryDate) < 0 ? 'text-red-500' : getDaysRemaining(product.expiryDate) <= notificationDays ? 'text-amber-500' : 'text-emerald-500'}`}>
                             {getDaysRemaining(product.expiryDate) < 0 ? '!' : getDaysRemaining(product.expiryDate)}
                           </span>
                         </div>
                         <div>
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{t('branchName')}</span>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">{t('branchName')}</span>
                           <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 truncate block">{product.branchName || '-'}</span>
                         </div>
                       </div>
@@ -523,21 +523,21 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
                                                 <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-mono bg-slate-100 dark:bg-slate-800 inline-block px-1.5 py-0.5 rounded">{product.code}</p>
                                             </div>
                                         </div>
-                                        <span className={`px-2 py-1 inline-flex items-center gap-1 text-[10px] font-bold rounded-lg uppercase tracking-wider ${badge}`}>
+                                        <span className={`px-2 py-1 inline-flex items-center gap-1 text-xs font-bold rounded-lg uppercase tracking-wider ${badge}`}>
                                             {t(product.status)}
                                         </span>
                                     </div>
                                     <div className="grid grid-cols-3 gap-2 mt-4 bg-white/50 dark:bg-slate-900/50 p-3 rounded-xl">
                                         <div>
-                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{t('branchName')}</span>
+                                            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">{t('branchName')}</span>
                                             <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 truncate block">{product.branchName || '-'}</span>
                                         </div>
                                         <div>
-                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{t('expiryDate')}</span>
+                                            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">{t('expiryDate')}</span>
                                             <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">{product.expiryDate}</span>
                                         </div>
                                         <div>
-                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{t('daysRemaining')}</span>
+                                            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">{t('daysRemaining')}</span>
                                             <span className={`text-xs font-bold ${getDaysRemaining(product.expiryDate) < 0 ? 'text-red-500' : getDaysRemaining(product.expiryDate) <= notificationDays ? 'text-amber-500' : 'text-emerald-500'}`}>
                                               {getDaysRemaining(product.expiryDate) < 0 ? t('ProductStatus.Expired') : getDaysRemaining(product.expiryDate)}
                                             </span>

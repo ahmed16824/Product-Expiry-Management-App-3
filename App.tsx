@@ -488,7 +488,7 @@ const App: React.FC = () => {
     const NavButton = ({ view, label, icon }: { view: View; label: string; icon: React.ReactNode }) => (
         <button
           onClick={() => setCurrentView(view)}
-          className={`flex-1 flex flex-col items-center justify-center p-2 text-[10px] font-bold transition-all duration-300 ${
+          className={`flex-1 flex flex-col items-center justify-center p-2 text-xs font-bold transition-all duration-300 ${
             currentView === view 
                 ? 'text-brand-600 dark:text-brand-400 scale-110' 
                 : 'text-slate-400 dark:text-slate-500 hover:text-brand-500'
@@ -497,7 +497,7 @@ const App: React.FC = () => {
           <div className={`mb-1 p-2 rounded-xl transition-all ${currentView === view ? 'bg-brand-50 dark:bg-brand-900/20' : ''}`}>
             {icon}
           </div>
-          <span className="uppercase tracking-widest text-[8px]">{label}</span>
+          <span className="uppercase tracking-widest text-[10px]">{label}</span>
         </button>
     );
 
@@ -507,13 +507,13 @@ const App: React.FC = () => {
                 <LoginScreen users={appData.users} onSignUp={handleSignUp} />
             ) : (
                 <div className="flex flex-col h-full">
-                    <header className="flex-shrink-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-sm border-b border-slate-200/50 dark:border-slate-800/50 p-4 flex justify-between items-center sticky top-0 z-30">
-                        <div className="flex items-center gap-3">
+                    <header className="flex-shrink-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-sm border-b border-slate-200/50 dark:border-slate-800/50 p-2 flex justify-between items-center sticky top-0 z-30">
+                        <div className="flex items-center gap-2">
                             <motion.div 
                               whileHover={{ rotate: 10 }}
-                              className="p-2.5 bg-brand-600 rounded-2xl text-white shadow-xl shadow-brand-500/20"
+                              className="p-2 bg-brand-600 rounded-xl text-white shadow-lg shadow-brand-500/20"
                             >
-                                <AppLogoIcon className="w-6 h-6" />
+                                <AppLogoIcon className="w-5 h-5" />
                             </motion.div>
                             <div>
                               <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight font-display leading-tight">{t('appName')}</h1>
@@ -539,7 +539,7 @@ const App: React.FC = () => {
                         </div>
                     </header>
 
-                    <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 bg-slate-50 dark:bg-slate-950">
+                    <main className="flex-1 overflow-y-auto p-2 md:p-3 lg:p-4 bg-slate-50 dark:bg-slate-950">
                         <div className="max-w-7xl mx-auto">
                             <AnimatePresence mode="wait">
                               <motion.div
@@ -556,21 +556,21 @@ const App: React.FC = () => {
                     </main>
 
                     <footer className="flex-shrink-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-200/50 dark:border-slate-800/50 sticky bottom-0 z-30 pb-safe">
-                         <nav className="flex justify-around items-center h-20 px-4 max-w-md mx-auto relative">
-                            <NavButton view="dashboard" label={t('dashboard')} icon={<DashboardIcon className="w-6 h-6" />} />
+                         <nav className="flex justify-around items-center h-16 px-4 max-w-md mx-auto relative">
+                            <NavButton view="dashboard" label={t('dashboard')} icon={<DashboardIcon className="w-5 h-5" />} />
                             
-                            <div className="relative -top-8 flex justify-center w-24">
+                            <div className="relative -top-6 flex justify-center w-20">
                                 <motion.button 
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.9 }}
                                     onClick={handleScanRequest} 
-                                    className="absolute w-16 h-16 bg-brand-600 rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-brand-500/40 border-4 border-slate-50 dark:border-slate-950"
+                                    className="absolute w-14 h-14 bg-brand-600 rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-brand-500/40 border-4 border-slate-50 dark:border-slate-950"
                                 >
-                                   <BarcodeIcon className="w-8 h-8"/>
+                                   <BarcodeIcon className="w-7 h-7"/>
                                 </motion.button>
                             </div>
 
-                            <NavButton view="settings" label={t('settings')} icon={<SettingsIcon className="w-6 h-6" />} />
+                            <NavButton view="settings" label={t('settings')} icon={<SettingsIcon className="w-5 h-5" />} />
                         </nav>
                     </footer>
                 </div>
