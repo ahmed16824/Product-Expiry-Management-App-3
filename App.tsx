@@ -516,7 +516,7 @@ const App: React.FC = () => {
                                 <AppLogoIcon className="w-5 h-5" />
                             </motion.div>
                             <div>
-                              <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight font-display leading-tight">{t('appName')}</h1>
+                              <h1 className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-brand-600 to-slate-900 dark:from-white dark:via-brand-400 dark:to-white tracking-tighter font-display leading-tight">{t('appName')}</h1>
                               <p className="text-[10px] font-bold text-brand-500 uppercase tracking-widest leading-none mt-0.5">{currentUser.organizationName}</p>
                             </div>
                         </div>
