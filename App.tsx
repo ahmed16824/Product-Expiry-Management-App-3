@@ -517,7 +517,6 @@ const App: React.FC = () => {
                             </motion.div>
                             <div>
                               <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight font-display leading-tight">{currentUser.organizationName}</h1>
-                              <p className="text-[10px] font-bold text-brand-500 uppercase tracking-widest leading-none mt-0.5">{t('appName')}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2">

@@ -142,7 +142,7 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
             animate={{ opacity: 1, x: 0 }}
             className="text-2xl font-black tracking-tight text-slate-900 dark:text-white font-display"
           >
-            {t('dashboardTitle') || 'Dashboard'}
+            {t('appName')}
           </motion.h1>
         </div>
         
