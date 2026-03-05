@@ -144,14 +144,6 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
           >
             {t('dashboardTitle') || 'Dashboard'}
           </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-slate-500 dark:text-slate-400 mt-1 font-medium"
-          >
-            {t('dashboardSubtitle') || 'Manage and track your product inventory'}
-          </motion.p>
         </div>
         
         <div className="flex items-center gap-2">

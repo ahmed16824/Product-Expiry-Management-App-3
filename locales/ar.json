@@ -2,6 +2,7 @@
 {
   "appName": "إدارة الصلاحية",
   "dashboard": "الصفحة الرئيسية",
+  "dashboardTitle": "لوحة التحكم",
   "settings": "الإعدادات",
   "totalProducts": "إجمالي المنتجات",
   "validProducts": "منتجات سليمة",
