@@ -159,7 +159,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ users, onSignUp }) => {
               >
                   <AppLogoIcon className="w-12 h-12 text-white" />
               </motion.div>
-              <h2 className="mt-6 text-3xl font-black text-center text-slate-900 dark:text-white tracking-tight">{t('welcomeMessage')}</h2>
+              <motion.h2 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+                className="mt-6 text-4xl font-black text-center bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-brand-600 to-slate-900 dark:from-white dark:via-brand-400 dark:to-white tracking-tighter"
+              >
+                {t('welcomeMessage')}
+              </motion.h2>
               <p className="mt-2 text-center text-slate-500 dark:text-slate-400 font-medium">
                   {isSignUp ? t('createAccount') : t('loginPrompt')}
               </p>
