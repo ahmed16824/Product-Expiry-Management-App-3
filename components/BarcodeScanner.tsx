@@ -47,12 +47,16 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanSuccess, onClose,
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!html5QrCodeRef.current) {
-        // Initialize if not ready (though it should be)
-         html5QrCodeRef.current = new Html5Qrcode(containerId);
-    }
-
     try {
+      // Stop the camera scanner if it's running to avoid conflicts
+      await stopScanner();
+      // Small delay to ensure cleanup
+      await new Promise(r => setTimeout(r, 100));
+
+      if (!html5QrCodeRef.current) {
+         html5QrCodeRef.current = new Html5Qrcode(containerId);
+      }
+
       playSound('click');
       const result = await html5QrCodeRef.current.scanFile(file, true);
       playSound('scan');
