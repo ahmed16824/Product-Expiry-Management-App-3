@@ -241,57 +241,49 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanSuccess, onClose,
   };
 
   const ScannerOverlay = () => (
-    <div className="absolute inset-0 pointer-events-none z-10 flex flex-col">
-      {/* Top Backdrop */}
-      <div className="flex-1 bg-black/60 backdrop-blur-[2px]"></div>
-      
-      <div className="flex w-full" style={{ height: isInline ? '180px' : '280px' }}>
-        {/* Left Backdrop */}
-        <div className="flex-1 bg-black/60 backdrop-blur-[2px]"></div>
-        
-        {/* Scanning Area */}
-        <div className={`relative ${isInline ? 'w-full max-w-[280px]' : 'w-72'} h-full bg-transparent mx-auto overflow-hidden rounded-3xl`}>
-           {/* Success Flash */}
-           <AnimatePresence>
-             {successFlash && (
-               <motion.div 
-                 initial={{ opacity: 0 }}
-                 animate={{ opacity: 1 }}
-                 exit={{ opacity: 0 }}
-                 className="absolute inset-0 bg-emerald-500/20 z-30 flex items-center justify-center backdrop-blur-[1px]"
-               >
-                 <div className="bg-white rounded-full p-3 shadow-xl">
-                   <Scan className="w-8 h-8 text-emerald-600" />
-                 </div>
-               </motion.div>
-             )}
-           </AnimatePresence>
-        </div>
-        
-        {/* Right Backdrop */}
-        <div className="flex-1 bg-black/60 backdrop-blur-[2px]"></div>
+    <div className="absolute inset-0 pointer-events-none z-10 flex flex-col items-center justify-center overflow-hidden">
+      {/* Cutout Box with Shadow Backdrop */}
+      <div 
+        className={`relative ${isInline ? 'w-full max-w-[280px] h-[180px]' : 'w-72 h-72'} rounded-3xl shadow-[0_0_0_5000px_rgba(0,0,0,0.6)]`}
+      >
+         {/* Red Laser Line */}
+         <div className="absolute left-0 w-full h-0.5 bg-red-600 shadow-[0_0_15px_rgba(220,38,38,1)] animate-scan-line z-20"></div>
+
+         {/* Success Flash */}
+         <AnimatePresence>
+           {successFlash && (
+             <motion.div 
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               exit={{ opacity: 0 }}
+               className="absolute inset-0 bg-emerald-500/20 z-30 flex items-center justify-center backdrop-blur-[1px]"
+             >
+               <div className="bg-white rounded-full p-3 shadow-xl">
+                 <Scan className="w-8 h-8 text-emerald-600" />
+               </div>
+             </motion.div>
+           )}
+         </AnimatePresence>
       </div>
       
-      {/* Bottom Backdrop */}
-      <div className="flex-1 bg-black/60 backdrop-blur-[2px] flex flex-col items-center pt-8 relative">
-        {!isInline && (
-          <div className="bg-black/40 backdrop-blur-md px-6 py-3 rounded-full border border-white/10 shadow-xl">
+      {/* Bottom Text Overlay */}
+      {!isInline && (
+        <div className="absolute bottom-24 left-0 right-0 flex flex-col items-center z-20">
+          <div className="bg-black/40 backdrop-blur-md px-6 py-3 rounded-full border border-white/10 shadow-xl mb-6">
             <p className="text-white text-sm font-medium tracking-wide flex items-center gap-2">
               <Scan className="w-4 h-4 text-brand-400" />
               {t('barcodeScannerPrompt')}
             </p>
           </div>
-        )}
-        
-        {!isInline && (
-           <button 
+          
+          <button 
             onClick={() => setIsManualInputOpen(true)}
-            className="mt-6 text-white/60 text-xs font-bold uppercase tracking-widest hover:text-white transition-colors underline underline-offset-4 pointer-events-auto"
+            className="text-white/60 text-xs font-bold uppercase tracking-widest hover:text-white transition-colors underline underline-offset-4 pointer-events-auto"
           >
             {t('manualEntry') || 'MANUAL ENTRY'}
           </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 
