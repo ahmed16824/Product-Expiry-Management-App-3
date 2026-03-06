@@ -29,7 +29,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ users, onSignUp }) => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [newUserRole, setNewUserRole] = useState<Role>(Role.Employee);
-  const [organizationName, setOrganizationName] = useState('');
+  const [organizationName, setOrganizationName] = useState('My Store');
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,10 +105,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ users, onSignUp }) => {
       onSubmit={handleSignUpSubmit} 
       className="mt-8 space-y-5"
     >
-        <div>
-            <label className="block mb-2 text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest" htmlFor="organization-name">{t('organizationNameLabel')}</label>
-            <input id="organization-name" className="input-field" type="text" value={organizationName} onChange={(e) => setOrganizationName(e.target.value)} required />
-        </div>
         <div>
             <label className="block mb-2 text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest" htmlFor="new-username">{t('username')}</label>
             <input id="new-username" className="input-field" type="text" value={newUsername} onChange={(e) => setNewUsername(e.target.value)} required />
