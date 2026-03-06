@@ -309,12 +309,53 @@ const App: React.FC = () => {
         return Array.from(companies).filter(Boolean).sort();
     }, [userScannableProducts, userProducts]);
 
+    // Handle browser back button
+    useEffect(() => {
+        // Set initial state if null
+        if (!window.history.state) {
+            window.history.replaceState({ view: 'dashboard' }, '');
+        }
+
+        const handlePopState = (event: PopStateEvent) => {
+            // Close overlays in priority order
+            if (isScannerOpen) {
+                setIsScannerOpen(false);
+                return;
+            }
+            
+            if (confirmDeleteState) {
+                setConfirmDeleteState(null);
+                return;
+            }
+
+            if (isProductModalOpen) {
+                setIsProductModalOpen(false);
+                setProductToEdit(null);
+                return;
+            }
+
+            // Handle View Navigation
+            if (currentView === 'settings') {
+                setCurrentView('dashboard');
+                return;
+            }
+            
+            // If we are at dashboard and popstate happens (user pressed back again),
+            // we let the browser handle it (might exit app or do nothing if stack empty)
+        };
+
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, [isScannerOpen, isProductModalOpen, confirmDeleteState, currentView]);
+
     const handleAddProduct = useCallback(() => {
+        window.history.pushState({ modal: true }, '');
         setProductToEdit(null);
         setIsProductModalOpen(true);
     }, []);
 
     const handleEditProduct = useCallback((product: Product) => {
+        window.history.pushState({ modal: true }, '');
         setProductToEdit(product);
         setIsProductModalOpen(true);
     }, []);
@@ -343,11 +384,11 @@ const App: React.FC = () => {
             );
         }
 
-        setIsProductModalOpen(false);
-        setProductToEdit(null);
+        window.history.back(); // Close modal via history
     }, [currentUser, appData.products, addNotification, t]);
     
     const handleDeleteRequest = useCallback((productId: string) => {
+        window.history.pushState({ modal: true }, '');
         setConfirmDeleteState({ isOpen: true, productId });
     }, []);
     
@@ -376,14 +417,20 @@ const App: React.FC = () => {
                 addToast(t('productDeleted'), 'success');
             }
 
-            setConfirmDeleteState(null);
+            window.history.back(); // Close confirm modal via history
         }
     }, [confirmDeleteState, appData.products, addToast, t, addNotification]);
     
-    const handleScanRequest = useCallback(() => setIsScannerOpen(true), []);
+    const handleScanRequest = useCallback(() => {
+        window.history.pushState({ scanner: true }, '');
+        setIsScannerOpen(true);
+    }, []);
     
     const handleScanSuccess = useCallback((code: string) => {
+        // Replace scanner state with modal state to avoid double back requirement
+        window.history.replaceState({ modal: true }, '');
         setIsScannerOpen(false);
+        
         const matchingProduct = userScannableProducts.find(p => p.code === code);
         
         const userBranches = currentUser?.branchNames && currentUser.branchNames.length > 0 
@@ -479,7 +526,10 @@ const App: React.FC = () => {
                             onAddProduct={handleAddProduct}
                             onEditProduct={handleEditProduct}
                             onDeleteProduct={handleDeleteRequest}
-                            onDeleteProducts={(ids) => setConfirmDeleteState({ isOpen: true, productId: ids })}
+                            onDeleteProducts={(ids) => {
+                                window.history.pushState({ modal: true }, '');
+                                setConfirmDeleteState({ isOpen: true, productId: ids });
+                            }}
                             notificationDays={notificationDays}
                        />;
         }
@@ -487,7 +537,19 @@ const App: React.FC = () => {
     
     const NavButton = ({ view, label, icon }: { view: View; label: string; icon: React.ReactNode }) => (
         <button
-          onClick={() => setCurrentView(view)}
+          onClick={() => {
+              if (view === currentView) return;
+              if (view === 'settings') {
+                  window.history.pushState({ view: 'settings' }, '');
+                  setCurrentView('settings');
+              } else {
+                  if (currentView === 'settings') {
+                      window.history.back();
+                  } else {
+                      setCurrentView('dashboard');
+                  }
+              }
+          }}
           className={`flex-1 flex flex-col items-center justify-center p-2 text-xs font-bold transition-all duration-300 ${
             currentView === view 
                 ? 'text-brand-600 dark:text-brand-400 scale-110' 
@@ -579,12 +641,12 @@ const App: React.FC = () => {
                 <>
                     <Modal 
                         isOpen={isProductModalOpen} 
-                        onClose={() => setIsProductModalOpen(false)} 
+                        onClose={() => window.history.back()} 
                         title={productToEdit?.id ? t('editProductTitle') : t('addProductTitle')}
                     >
                         <ProductForm 
                             onSave={handleSaveProduct}
-                            onClose={() => setIsProductModalOpen(false)}
+                            onClose={() => window.history.back()}
                             productToEdit={productToEdit}
                             scannableProducts={userScannableProducts}
                             onScanRequest={handleScanRequest}
@@ -595,7 +657,7 @@ const App: React.FC = () => {
                     
                     <ConfirmModal
                         isOpen={confirmDeleteState?.isOpen ?? false}
-                        onClose={() => setConfirmDeleteState(null)}
+                        onClose={() => window.history.back()}
                         onConfirm={handleConfirmDelete}
                         title={Array.isArray(confirmDeleteState?.productId) ? t('confirmDeleteProductsTitle') : t('confirmDeleteProductTitle')}
                     >
@@ -606,7 +668,7 @@ const App: React.FC = () => {
                 </>
             )}
             
-            {isScannerOpen && <BarcodeScanner onScanSuccess={handleScanSuccess} onClose={() => setIsScannerOpen(false)} />}
+            {isScannerOpen && <BarcodeScanner onScanSuccess={handleScanSuccess} onClose={() => window.history.back()} />}
             <ToastContainer />
         </>
     );
