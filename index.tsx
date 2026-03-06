@@ -6,6 +6,7 @@ import { SettingsProvider } from './context/SettingsContext';
 import { NotificationProvider } from './context/NotificationContext';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
+import { SoundProvider } from './context/SoundContext';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -16,13 +17,15 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <SettingsProvider>
-      <NotificationProvider>
-        <ToastProvider>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
-        </ToastProvider>
-      </NotificationProvider>
+      <SoundProvider>
+        <NotificationProvider>
+          <ToastProvider>
+            <AuthProvider>
+              <App />
+            </AuthProvider>
+          </ToastProvider>
+        </NotificationProvider>
+      </SoundProvider>
     </SettingsProvider>
   </React.StrictMode>
 );

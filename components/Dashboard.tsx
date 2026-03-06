@@ -5,6 +5,7 @@ import StatCard from './StatCard';
 import { ProductsIcon, CheckCircleIcon, ExclamationTriangleIcon, XCircleIcon, PencilIcon, TrashIcon, PlusIcon, DownloadIcon, MagnifyingGlassIcon } from './Icons';
 import { useSettings } from '../context/SettingsContext';
 import { useAuth } from '../context/AuthContext';
+import { useSound } from '../context/SoundContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 import { LayoutGrid, List, BarChart3, PieChart as PieChartIcon, ArrowUpDown, CheckSquare, Square, Trash2 } from 'lucide-react';
@@ -22,6 +23,7 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditProduct, onDeleteProduct, onDeleteProducts, notificationDays }) => {
   const { t, direction } = useSettings();
   const { currentUser } = useAuth();
+  const { playSound } = useSound();
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<'name' | 'expiryDate' | 'company'>('expiryDate');
@@ -148,7 +150,10 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
         
         <div className="flex items-center gap-2">
            <button 
-              onClick={() => setShowCharts(!showCharts)}
+              onClick={() => {
+                  playSound('click');
+                  setShowCharts(!showCharts);
+              }}
               className={`
                 relative group p-2.5 rounded-xl border transition-all duration-300 overflow-hidden
                 ${showCharts 
@@ -167,14 +172,20 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
            </button>
            <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-700 mx-1"></div>
            <button 
-              onClick={handleExportToStyledExcel} 
+              onClick={() => {
+                  playSound('click');
+                  handleExportToStyledExcel();
+              }} 
               className="group p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-200 dark:hover:border-emerald-800 transition-all active:scale-95 hover:shadow-md"
               title={t('exportExcelReport')}
            >
              <DownloadIcon className="w-5 h-5 transition-transform duration-300 group-hover:-translate-y-0.5" strokeWidth={2.5} />
            </button>
            <button 
-              onClick={onAddProduct} 
+              onClick={() => {
+                  playSound('click');
+                  onAddProduct();
+              }} 
               className="btn-primary hidden md:flex items-center gap-2"
            >
              <PlusIcon className="w-5 h-5" />
@@ -195,7 +206,10 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
             value={products.length} 
             color="sky"
             icon={<ProductsIcon className="w-8 h-8" />}
-            onClick={() => handleQuickFilterClick('all')}
+            onClick={() => {
+                playSound('click');
+                handleQuickFilterClick('all');
+            }}
             isActive={statusFilter === 'all'}
         />
         <StatCard 
@@ -203,7 +217,10 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
             value={productStats.valid} 
             color="green" 
             icon={<CheckCircleIcon className="w-8 h-8" />} 
-            onClick={() => handleQuickFilterClick(ProductStatus.Valid)}
+            onClick={() => {
+                playSound('click');
+                handleQuickFilterClick(ProductStatus.Valid);
+            }}
             isActive={statusFilter === ProductStatus.Valid}
         />
         <StatCard 
@@ -211,7 +228,10 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
             value={productStats.nearExpiry} 
             color="yellow" 
             icon={<ExclamationTriangleIcon className="w-8 h-8" />}
-            onClick={() => handleQuickFilterClick(ProductStatus.NearExpiry)}
+            onClick={() => {
+                playSound('click');
+                handleQuickFilterClick(ProductStatus.NearExpiry);
+            }}
             isActive={statusFilter === ProductStatus.NearExpiry}
         />
         <StatCard 
@@ -219,7 +239,10 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
             value={productStats.expired} 
             color="red" 
             icon={<XCircleIcon className="w-8 h-8" />} 
-            onClick={() => handleQuickFilterClick(ProductStatus.Expired)}
+            onClick={() => {
+                playSound('click');
+                handleQuickFilterClick(ProductStatus.Expired);
+            }}
             isActive={statusFilter === ProductStatus.Expired}
         />
       </motion.div>
@@ -356,20 +379,29 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
               <option value="company">{t('company')}</option>
             </select>
             <button 
-              onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+              onClick={() => {
+                  playSound('click');
+                  setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+              }}
               className="p-1 hover:bg-white dark:hover:bg-slate-800 rounded-md transition-all text-slate-500"
             >
               <ArrowUpDown className={`w-3.5 h-3.5 transition-transform ${sortOrder === 'desc' ? 'rotate-180' : ''}`} />
             </button>
           </div>
           <button 
-            onClick={() => setViewMode('table')}
+            onClick={() => {
+                playSound('click');
+                setViewMode('table');
+            }}
             className={`flex-1 md:flex-none p-2 rounded-lg transition-all ${viewMode === 'table' ? 'bg-white dark:bg-slate-800 shadow-sm text-brand-600' : 'text-slate-500'}`}
           >
             <List className="w-5 h-5 mx-auto" />
           </button>
           <button 
-            onClick={() => setViewMode('grid')}
+            onClick={() => {
+                playSound('click');
+                setViewMode('grid');
+            }}
             className={`flex-1 md:flex-none p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-white dark:bg-slate-800 shadow-sm text-brand-600' : 'text-slate-500'}`}
           >
             <LayoutGrid className="w-5 h-5 mx-auto" />
@@ -435,7 +467,10 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
                                   className={`${rowClass} transition-colors duration-200 ${selectedIds.includes(product.id) ? 'ring-1 ring-inset ring-brand-500 bg-brand-50/30 dark:bg-brand-900/10' : ''}`}
                                 >
                                     <td className="px-4 py-2">
-                                      <button onClick={() => toggleSelectProduct(product.id)} className="text-slate-400 hover:text-brand-500 transition-colors">
+                                      <button onClick={() => {
+                                          playSound('click');
+                                          toggleSelectProduct(product.id);
+                                      }} className="text-slate-400 hover:text-brand-500 transition-colors">
                                         {selectedIds.includes(product.id) ? (
                                           <CheckSquare className="w-4 h-4 text-brand-500" />
                                         ) : (
@@ -466,9 +501,15 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
                                     </td>
                                     <td className="px-4 py-2 whitespace-nowrap text-xs font-medium">
                                         <div className={`flex items-center gap-1 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
-                                            <button onClick={() => onEditProduct(product)} className="p-1.5 text-slate-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-900/20 rounded-lg transition-all"><PencilIcon className="w-3.5 h-3.5" /></button>
+                                            <button onClick={() => {
+                                                playSound('click');
+                                                onEditProduct(product);
+                                            }} className="p-1.5 text-slate-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-brand-900/20 rounded-lg transition-all"><PencilIcon className="w-3.5 h-3.5" /></button>
                                             {currentUser?.role !== Role.Employee && (
-                                              <button onClick={() => onDeleteProduct(product.id)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"><TrashIcon className="w-3.5 h-3.5" /></button>
+                                              <button onClick={() => {
+                                                  playSound('click');
+                                                  onDeleteProduct(product.id);
+                                              }} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"><TrashIcon className="w-3.5 h-3.5" /></button>
                                             )}
                                         </div>
                                     </td>
@@ -504,9 +545,15 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
                           </div>
                         </div>
                         <div className="flex gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                          <button onClick={() => onEditProduct(product)} className="p-1 text-slate-400 hover:text-brand-600 bg-white/50 dark:bg-slate-800/50 rounded-lg"><PencilIcon className="w-3.5 h-3.5" /></button>
+                          <button onClick={() => {
+                              playSound('click');
+                              onEditProduct(product);
+                          }} className="p-1 text-slate-400 hover:text-brand-600 bg-white/50 dark:bg-slate-800/50 rounded-lg"><PencilIcon className="w-3.5 h-3.5" /></button>
                           {currentUser?.role !== Role.Employee && (
-                            <button onClick={() => onDeleteProduct(product.id)} className="p-1 text-slate-400 hover:text-red-600 bg-white/50 dark:bg-slate-800/50 rounded-lg"><TrashIcon className="w-3.5 h-3.5" /></button>
+                            <button onClick={() => {
+                                playSound('click');
+                                onDeleteProduct(product.id);
+                            }} className="p-1 text-slate-400 hover:text-red-600 bg-white/50 dark:bg-slate-800/50 rounded-lg"><TrashIcon className="w-3.5 h-3.5" /></button>
                           )}
                         </div>
                       </div>
@@ -589,11 +636,17 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
                                         </div>
                                     </div>
                                     <div className="flex justify-end gap-2 mt-3 pt-3 border-t border-slate-200/50 dark:border-slate-700/50">
-                                        <button onClick={() => onEditProduct(product)} className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-800 rounded-lg text-brand-600 hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-700 text-xs font-bold transition-all active:scale-95">
+                                        <button onClick={() => {
+                                            playSound('click');
+                                            onEditProduct(product);
+                                        }} className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-800 rounded-lg text-brand-600 hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-700 text-xs font-bold transition-all active:scale-95">
                                             <PencilIcon className="w-3.5 h-3.5" /> {t('edit')}
                                         </button>
                                         {currentUser?.role !== Role.Employee && (
-                                            <button onClick={() => onDeleteProduct(product.id)} className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-800 rounded-lg text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-700 text-xs font-bold transition-all active:scale-95">
+                                            <button onClick={() => {
+                                                playSound('click');
+                                                onDeleteProduct(product.id);
+                                            }} className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-800 rounded-lg text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-700 text-xs font-bold transition-all active:scale-95">
                                                 <TrashIcon className="w-3.5 h-3.5" /> {t('delete')}
                                             </button>
                                         )}
@@ -640,7 +693,10 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
             exit={{ scale: 0, opacity: 0 }}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            onClick={onAddProduct}
+            onClick={() => {
+                playSound('click');
+                onAddProduct();
+            }}
             className={`fixed bottom-24 ${direction === 'rtl' ? 'left-6' : 'right-6'} z-40 w-14 h-14 bg-brand-600 text-white rounded-full shadow-xl shadow-brand-500/30 hover:bg-brand-700 transition-all duration-300 flex items-center justify-center md:hidden`}
             aria-label={t('addNewProduct')}
           >
@@ -660,7 +716,10 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
           >
             <div className="bg-slate-900 text-white p-4 rounded-3xl shadow-2xl flex items-center justify-between border border-slate-800">
               <div className="flex items-center gap-4">
-                <button onClick={() => setSelectedIds([])} className="p-2 hover:bg-slate-800 rounded-xl transition-colors">
+                <button onClick={() => {
+                    playSound('click');
+                    setSelectedIds([]);
+                }} className="p-2 hover:bg-slate-800 rounded-xl transition-colors">
                   <XCircleIcon className="w-5 h-5" />
                 </button>
                 <span className="text-sm font-bold uppercase tracking-widest">{t('selectedCount', { count: selectedIds.length })}</span>
@@ -668,6 +727,7 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
               <div className="flex items-center gap-2">
                 <button 
                   onClick={() => {
+                    playSound('click');
                     onDeleteProducts(selectedIds);
                     setSelectedIds([]);
                   }}

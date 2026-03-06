@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, ReactNode, useCallback } from 'react';
 import { SystemNotification, ToastType } from '../types';
+import { useSound } from './SoundContext';
 
 interface NotificationContextType {
   notifications: SystemNotification[];
@@ -17,6 +18,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
   const [permission, setPermission] = useState<NotificationPermission>(
     'Notification' in window ? Notification.permission : 'default'
   );
+  const { playSound } = useSound();
 
   const requestPermission = useCallback(async () => {
     if (!('Notification' in window)) return;
@@ -30,6 +32,15 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 
   const addNotification = useCallback((title: string, message: string, type: ToastType, productId?: string) => {
     const id = `notif_${Date.now()}_${Math.random()}`;
+    
+    // Play sound based on notification type
+    if (type === 'error') {
+        playSound('error');
+    } else if (type === 'warning') {
+        playSound('warning');
+    } else {
+        playSound('notification');
+    }
 
     setNotifications(prev => {
         // Prevent duplicate product notifications

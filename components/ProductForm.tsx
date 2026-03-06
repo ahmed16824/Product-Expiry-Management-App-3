@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { GoogleGenAI } from "@google/genai";
 import BarcodeScanner from './BarcodeScanner';
 import { ScanBarcode, Wand2, QrCode } from 'lucide-react';
+import { useSound } from '../context/SoundContext';
 
 interface ProductFormProps {
   onSave: (product: Product) => void;
@@ -22,6 +23,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onSave, onClose, productToEdi
   const { t, direction } = useSettings();
   const { addToast } = useToaster();
   const { currentUser } = useAuth();
+  const { playSound } = useSound();
   const [isSearchingProduct, setIsSearchingProduct] = useState(false);
   const [isInlineScannerOpen, setIsInlineScannerOpen] = useState(false);
   const [product, setProduct] = useState<Product>({
@@ -300,7 +302,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ onSave, onClose, productToEdi
           
           <button
               type="button"
-              onClick={() => setIsInlineScannerOpen(!isInlineScannerOpen)}
+              onClick={() => {
+                  playSound('click');
+                  setIsInlineScannerOpen(!isInlineScannerOpen);
+              }}
               className={`px-3 rounded-xl border transition-all active:scale-95 flex items-center justify-center gap-2 ${isInlineScannerOpen ? 'bg-brand-100 border-brand-200 text-brand-600' : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
               title={t('scanBarcode') || 'Scan Barcode'}
           >
@@ -310,7 +315,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ onSave, onClose, productToEdi
           
           <button
               type="button"
-              onClick={generateBarcode}
+              onClick={() => {
+                  playSound('click');
+                  generateBarcode();
+              }}
               className="px-3 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all active:scale-95 flex items-center justify-center"
               title={t('generateBarcode') || 'Generate Random Barcode'}
           >
@@ -347,13 +355,17 @@ const ProductForm: React.FC<ProductFormProps> = ({ onSave, onClose, productToEdi
       <div className={`flex justify-end pt-4 space-x-2 ${direction === 'rtl' ? 'space-x-reverse' : ''}`}>
         <button
           type="button"
-          onClick={onClose}
+          onClick={() => {
+              playSound('click');
+              onClose();
+          }}
           className="bg-white dark:bg-slate-600 py-2 px-4 border border-slate-300 dark:border-slate-500 rounded-md shadow-sm text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           {t('cancel')}
         </button>
         <button
           type="submit"
+          onClick={() => playSound('click')}
           className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
         >
           {t('saveProduct')}

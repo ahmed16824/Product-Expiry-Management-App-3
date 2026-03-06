@@ -4,6 +4,7 @@ import { getStatusStyles } from '../utils/productUtils';
 import { BellIcon } from './Icons';
 import { useSettings } from '../context/SettingsContext';
 import { motion, AnimatePresence } from 'motion/react';
+import { useSound } from '../context/SoundContext';
 
 interface NotificationsProps {
   allNotifications: SystemNotification[];
@@ -21,8 +22,14 @@ const Notifications: React.FC<NotificationsProps> = ({
   onClearSystemNotifications
 }) => {
   const { t, direction } = useSettings();
+  const { playSound } = useSound();
   const [isOpen, setIsOpen] = useState(false);
   const componentRef = useRef<HTMLDivElement>(null);
+
+  const toggleOpen = () => {
+    if (!isOpen) playSound('click');
+    setIsOpen(!isOpen);
+  };
   const prevNotificationCount = useRef<number>(0);
   const [isPulsing, setIsPulsing] = useState(false);
 
@@ -55,7 +62,7 @@ const Notifications: React.FC<NotificationsProps> = ({
   return (
     <div className="relative" ref={componentRef}>
       <button 
-        onClick={() => setIsOpen(!isOpen)} 
+        onClick={toggleOpen} 
         className="relative text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 focus:outline-none p-2 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
       >
         <BellIcon className={`w-6 h-6 transition-transform duration-300 ${isPulsing ? 'scale-110' : ''}`} />
@@ -120,8 +127,9 @@ const Notifications: React.FC<NotificationsProps> = ({
 
                     {productNotifications.length > 0 && (
                        <div>
-                          <div className="px-5 py-3 bg-slate-50/50 dark:bg-slate-800/30 sticky top-0 z-10 backdrop-blur-sm">
+                          <div className="flex justify-between items-center px-5 py-3 bg-slate-50/50 dark:bg-slate-800/30 sticky top-0 z-10 backdrop-blur-sm">
                               <h4 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('productExpiryAlerts')}</h4>
+                              {/* Optional: Add clear all for products if needed, but usually we want users to act on them */}
                           </div>
                           <ul className="divide-y divide-slate-50 dark:divide-slate-800">
                             {productNotifications.map(notification => {
@@ -131,24 +139,28 @@ const Notifications: React.FC<NotificationsProps> = ({
                                 const { text, badge } = getStatusStyles(ProductStatus.NearExpiry);
                                 const daysLeft = Math.ceil((new Date(product.expiryDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
                                 return (
-                                <li key={notification.id} className="group transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                <li key={notification.id} className="group transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 relative overflow-hidden">
+                                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                     <button 
-                                      onClick={() => { onEditProduct(product); setIsOpen(false); }} 
+                                      onClick={() => { onEditProduct(product); setIsOpen(false); playSound('click'); }} 
                                       className={`w-full p-5 ${direction === 'rtl' ? 'text-right' : 'text-left'}`}
                                     >
                                       <div className="flex justify-between items-start mb-1">
                                         <p className="font-bold text-slate-900 dark:text-white group-hover:text-brand-600 transition-colors">{product.name}</p>
-                                        <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter ${badge}`}>
+                                        <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter ${badge} shadow-sm`}>
                                           {t('nearExpiry')}
                                         </span>
                                       </div>
-                                      <p className="text-xs text-slate-500 dark:text-slate-400 font-mono mb-2">{product.code}</p>
-                                      <div className="flex items-center text-xs font-semibold text-slate-600 dark:text-slate-300">
-                                        <svg className="w-3.5 h-3.5 mr-1.5 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <p className="text-xs text-slate-500 dark:text-slate-400 font-mono mb-2 flex items-center gap-1">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                        {product.code}
+                                      </p>
+                                      <div className="flex items-center text-xs font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-2 py-1 rounded-lg w-fit">
+                                        <svg className="w-3.5 h-3.5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                         {t('expiresInDays', { days: daysLeft })}
-                                        <span className="mx-2 opacity-20">|</span>
+                                        <span className="mx-2 opacity-30">|</span>
                                         {product.expiryDate}
                                       </div>
                                     </button>

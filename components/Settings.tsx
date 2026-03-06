@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { ScannableProduct, User, Role } from '../types';
 import { useSettings } from '../context/SettingsContext';
 import { useAuth } from '../context/AuthContext';
+import { useSound } from '../context/SoundContext';
 import { SettingsIcon, BellIcon, DatabaseIcon, LifebuoyIcon, UsersIcon, LogoutIcon, ChevronLeftIcon } from './Icons';
 import GeneralSettings from './settings/GeneralSettings';
 import NotificationSettings from './settings/NotificationSettings';
@@ -27,6 +28,7 @@ type SettingsSection = 'general' | 'notifications' | 'data' | 'support' | 'users
 const Settings: React.FC<SettingsProps> = (props) => {
     const { t, direction } = useSettings();
     const { currentUser, logout } = useAuth();
+    const { playSound } = useSound();
     const [activeSection, setActiveSection] = useState<SettingsSection | null>(null);
 
     const navItems = useMemo(() => {
@@ -65,7 +67,10 @@ const Settings: React.FC<SettingsProps> = (props) => {
         isLogout?: boolean;
     }> = ({ title, description, icon, onClick, isLogout = false }) => (
         <button
-            onClick={onClick}
+            onClick={() => {
+                playSound('click');
+                onClick();
+            }}
             className={`
                 w-full p-5 text-left bg-white dark:bg-slate-800 rounded-xl shadow-md
                 flex items-start gap-4 
@@ -98,7 +103,10 @@ const Settings: React.FC<SettingsProps> = (props) => {
             <div className="animate-fadeIn">
                 <div className="mb-6 flex items-center gap-3">
                     <button 
-                        onClick={() => setActiveSection(null)} 
+                        onClick={() => {
+                            playSound('click');
+                            setActiveSection(null);
+                        }} 
                         className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                         aria-label={t('cancel')}
                     >

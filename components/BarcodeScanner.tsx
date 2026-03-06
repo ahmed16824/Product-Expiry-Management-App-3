@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { useSettings } from '../context/SettingsContext';
+import { useSound } from '../context/SoundContext';
 import { 
   X, 
   Camera, 
@@ -21,6 +22,7 @@ interface BarcodeScannerProps {
 
 const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanSuccess, onClose, isInline = false }) => {
   const { t, direction } = useSettings();
+  const { playSound } = useSound();
   const [error, setError] = useState<string | null>(null);
   const [isFlashOn, setIsFlashOn] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
@@ -81,9 +83,7 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanSuccess, onClose,
           if ('vibrate' in navigator) {
             navigator.vibrate(200);
           }
-          if ((window as any).playScanBeep) {
-            (window as any).playScanBeep();
-          }
+          playSound('scan');
           
           setTimeout(() => {
             setSuccessFlash(false);
@@ -125,31 +125,6 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanSuccess, onClose,
   }, [cameras, currentCameraIndex, isInline, onScanSuccess, stopScanner, t]);
 
   useEffect(() => {
-    // Initialize beep sound
-    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const playBeep = () => {
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-      const oscillator = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-      
-      // Success "ding" sound
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime);
-      oscillator.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.15);
-      
-      gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-      
-      oscillator.start();
-      oscillator.stop(audioCtx.currentTime + 0.15);
-    };
-    (window as any).playScanBeep = playBeep;
-
     // Small delay to ensure DOM is ready
     const timer = setTimeout(() => {
       const element = document.getElementById(containerId);
@@ -235,6 +210,7 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanSuccess, onClose,
   const handleManualSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (manualCode.trim()) {
+      playSound('scan');
       onScanSuccess(manualCode.trim());
       setIsManualInputOpen(false);
     }

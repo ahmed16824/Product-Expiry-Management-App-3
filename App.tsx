@@ -17,6 +17,7 @@ import * as db from './utils/db';
 import { getProductStatus } from './utils/productUtils';
 import ToastContainer from './components/ToastNotifications';
 import { useToaster } from './context/ToastContext';
+import { useSound } from './context/SoundContext';
 
 type View = 'dashboard' | 'settings';
 
@@ -111,6 +112,7 @@ const App: React.FC = () => {
     const { t, direction, notificationDays } = useSettings();
     const { addNotification, notifications, dismissNotification, clearSystemNotifications } = useNotifier();
     const { addToast } = useToaster();
+    const { playSound } = useSound();
     const { currentUser, login, logout } = useAuth();
     
     const [currentView, setCurrentView] = useState<View>('dashboard');
@@ -371,12 +373,14 @@ const App: React.FC = () => {
         dispatch({ type: 'SAVE_PRODUCT', payload: productToSave });
         
         if (isEditing) {
+            playSound('success');
             addNotification(
                 t('productEditedTitle'),
                 t('productEditedMessage', { name: product.name }),
                 'info'
             );
         } else {
+            playSound('success');
             addNotification(
                 t('productAddedTitle'),
                 t('productAddedMessage', { name: product.name }),
@@ -400,6 +404,7 @@ const App: React.FC = () => {
                 const ids = confirmDeleteState.productId as string[];
                 dispatch({ type: 'DELETE_PRODUCTS', payload: ids });
                 ids.forEach(id => db.deleteItem(db.STORES.products, id).catch(e => console.error("Failed to delete product from DB", e)));
+                playSound('delete');
                 addToast(t('productsDeleted'), 'success');
             } else {
                 const id = confirmDeleteState.productId as string;
@@ -408,6 +413,7 @@ const App: React.FC = () => {
                 db.deleteItem(db.STORES.products, id).catch(e => console.error("Failed to delete product from DB", e));
                 
                 if (productToDelete) {
+                    playSound('delete');
                     addNotification(
                         t('productDeletedTitle'),
                         t('productDeletedMessage', { name: productToDelete.name }),
@@ -538,6 +544,7 @@ const App: React.FC = () => {
     const NavButton = ({ view, label, icon }: { view: View; label: string; icon: React.ReactNode }) => (
         <button
           onClick={() => {
+              playSound('click');
               if (view === currentView) return;
               if (view === 'settings') {
                   window.history.pushState({ view: 'settings' }, '');
@@ -591,7 +598,10 @@ const App: React.FC = () => {
                             />
                             <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-800 mx-1"></div>
                             <button 
-                              onClick={logout} 
+                              onClick={() => {
+                                  playSound('click');
+                                  logout();
+                              }} 
                               className="text-slate-400 dark:text-slate-500 p-2.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 transition-all" 
                               aria-label={t('logout')}
                             >
@@ -624,7 +634,10 @@ const App: React.FC = () => {
                                 <motion.button 
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.9 }}
-                                    onClick={handleScanRequest} 
+                                    onClick={() => {
+                                        playSound('click');
+                                        handleScanRequest();
+                                    }} 
                                     className="absolute w-14 h-14 bg-brand-600 rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-brand-500/40 border-4 border-slate-50 dark:border-slate-950"
                                 >
                                    <BarcodeIcon className="w-7 h-7"/>

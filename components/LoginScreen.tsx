@@ -5,6 +5,7 @@ import { useSettings } from '../context/SettingsContext';
 import { useToaster } from '../context/ToastContext';
 import { AppLogoIcon } from './Icons';
 import { motion, AnimatePresence } from 'motion/react';
+import { useSound } from '../context/SoundContext';
 
 interface LoginScreenProps {
   users: User[];
@@ -15,6 +16,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ users, onSignUp }) => {
   const { t } = useSettings();
   const { login } = useAuth();
   const { addToast } = useToaster();
+  const { playSound } = useSound();
   
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -42,9 +44,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ users, onSignUp }) => {
       );
 
       if (foundUser) {
+        playSound('success');
         addToast(t('loginSuccess') || 'Login successful!', 'success');
         login(foundUser);
       } else {
+        playSound('error');
         setLoginError(t('invalidCredentials') || t('loginFailed') || 'Invalid username or password');
         addToast(t('loginFailed'), 'error');
         setIsLoading(false);
@@ -59,7 +63,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ users, onSignUp }) => {
       return;
     }
     setIsLoading(true);
-    const onFailCallback = () => setIsLoading(false);
+    const onFailCallback = () => {
+        setIsLoading(false);
+        playSound('error');
+    };
     onSignUp({ username: newUsername, password_HACK: newPassword, role: newUserRole, organizationName }, onFailCallback);
   };
 
