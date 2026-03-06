@@ -212,5 +212,15 @@
   "productsUpdatedSuccess": "Products updated successfully",
   "edit": "Edit",
   "bulkEditDescription": "Updating {count} products. Leave fields empty to keep current values.",
-  "keepCurrentBranch": "Keep current branch"
+  "keepCurrentBranch": "Keep current branch",
+  "scanImage": "Scan Image",
+  "errorScanningImage": "Failed to read barcode from image",
+  "installApp": "Install App",
+  "installAppDesc": "Add the app to your home screen for quick access and offline use.",
+  "install": "Install",
+  "appInstalled": "App installed successfully!",
+  "howToInstall": "How to Install",
+  "howToInstallDesc": "Tap the Share button in your browser and select 'Add to Home Screen'.",
+  "pwaInstallTitle": "Install App",
+  "pwaInstallDescription": "You can install this app on your device for quick and easy access like native apps."
 }

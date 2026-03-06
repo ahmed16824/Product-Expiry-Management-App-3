@@ -10,6 +10,7 @@ import {
   RefreshCw, 
   Maximize, 
   Minimize,
+  Image as ImageIcon,
   Scan
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -39,6 +40,41 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanSuccess, onClose,
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const isStartingRef = useRef(false);
   const containerId = isInline ? "inline-reader" : "full-reader";
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!html5QrCodeRef.current) {
+        // Initialize if not ready (though it should be)
+         html5QrCodeRef.current = new Html5Qrcode(containerId);
+    }
+
+    try {
+      playSound('click');
+      const result = await html5QrCodeRef.current.scanFile(file, true);
+      playSound('scan');
+      onScanSuccess(result);
+      if (!isInline) {
+          onClose();
+      }
+    } catch (err) {
+      console.error("Error scanning file", err);
+      setError(t('errorScanningImage') || "Failed to read barcode from image");
+      playSound('error');
+    } finally {
+        // Reset file input
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    }
+  };
+
+  const triggerFileUpload = () => {
+    fileInputRef.current?.click();
+  };
 
   const stopScanner = useCallback(async () => {
     if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
@@ -372,6 +408,21 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanSuccess, onClose,
               <RefreshCw className="w-6 h-6" />
             </button>
           )}
+
+          <button 
+            onClick={triggerFileUpload}
+            className="w-14 h-14 flex items-center justify-center rounded-2xl bg-white/10 text-white backdrop-blur-md transition-all active:scale-90"
+            title={t('scanImage')}
+          >
+            <ImageIcon className="w-6 h-6" />
+          </button>
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            className="hidden" 
+            accept="image/*" 
+            onChange={handleFileUpload} 
+          />
         </div>
       </div>
 

@@ -212,5 +212,15 @@
   "productsUpdatedSuccess": "تم تحديث المنتجات بنجاح",
   "edit": "تعديل",
   "bulkEditDescription": "تحديث {count} منتجات. اترك الحقول فارغة للاحتفاظ بالقيم الحالية.",
-  "keepCurrentBranch": "الاحتفاظ بالفرع الحالي"
+  "keepCurrentBranch": "الاحتفاظ بالفرع الحالي",
+  "scanImage": "مسح صورة",
+  "errorScanningImage": "فشل قراءة الباركود من الصورة",
+  "installApp": "تثبيت التطبيق",
+  "installAppDesc": "أضف التطبيق إلى شاشتك الرئيسية للوصول السريع والعمل بدون إنترنت.",
+  "install": "تثبيت",
+  "appInstalled": "تم تثبيت التطبيق بنجاح!",
+  "howToInstall": "كيفية التثبيت",
+  "howToInstallDesc": "اضغط على زر المشاركة في متصفحك ثم اختر 'إضافة إلى الصفحة الرئيسية'.",
+  "pwaInstallTitle": "تثبيت التطبيق",
+  "pwaInstallDescription": "يمكنك تثبيت هذا التطبيق على جهازك للوصول إليه بسرعة وسهولة مثل التطبيقات الأصلية."
 }

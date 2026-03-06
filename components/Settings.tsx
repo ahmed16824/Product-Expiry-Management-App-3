@@ -5,7 +5,8 @@ import { ScannableProduct, User, Role } from '../types';
 import { useSettings } from '../context/SettingsContext';
 import { useAuth } from '../context/AuthContext';
 import { useSound } from '../context/SoundContext';
-import { SettingsIcon, BellIcon, DatabaseIcon, LifebuoyIcon, UsersIcon, LogoutIcon, ChevronLeftIcon } from './Icons';
+import { usePWA } from '../utils/usePWA';
+import { SettingsIcon, BellIcon, DatabaseIcon, LifebuoyIcon, UsersIcon, LogoutIcon, ChevronLeftIcon, DownloadIcon } from './Icons';
 import GeneralSettings from './settings/GeneralSettings';
 import NotificationSettings from './settings/NotificationSettings';
 import DataManagement from './settings/DataManagement';
@@ -29,6 +30,7 @@ const Settings: React.FC<SettingsProps> = (props) => {
     const { t, direction } = useSettings();
     const { currentUser, logout } = useAuth();
     const { playSound } = useSound();
+    const { deferredPrompt, installApp, isInstalled } = usePWA();
     const [activeSection, setActiveSection] = useState<SettingsSection | null>(null);
 
     const navItems = useMemo(() => {
@@ -132,6 +134,16 @@ const Settings: React.FC<SettingsProps> = (props) => {
                         onClick={() => setActiveSection(item.id as SettingsSection)}
                     />
                 ))}
+                
+                {deferredPrompt && !isInstalled && (
+                    <SettingsCard
+                        title={t('installApp')}
+                        description={t('installAppDesc')}
+                        icon={<DownloadIcon className="w-6 h-6" />}
+                        onClick={installApp}
+                    />
+                )}
+
                  <SettingsCard
                     title={t('logout')}
                     description={t('logoutDescription')}
