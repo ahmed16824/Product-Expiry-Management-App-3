@@ -9,6 +9,7 @@ import { useSound } from '../context/SoundContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 import { LayoutGrid, List, BarChart3, PieChart as PieChartIcon, ArrowUpDown, CheckSquare, Square, Trash2 } from 'lucide-react';
+import { usePWA } from '../utils/usePWA';
 import { exportProductsToExcel } from '../utils/excelExport';
 
 interface DashboardProps {
@@ -24,6 +25,7 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
   const { t, direction } = useSettings();
   const { currentUser } = useAuth();
   const { playSound } = useSound();
+  const { deferredPrompt, installApp, isInstalled } = usePWA();
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<'name' | 'expiryDate' | 'company'>('expiryDate');
@@ -181,6 +183,21 @@ const Dashboard: React.FC<DashboardProps> = ({ products, onAddProduct, onEditPro
            >
              <DownloadIcon className="w-5 h-5 transition-transform duration-300 group-hover:-translate-y-0.5" strokeWidth={2.5} />
            </button>
+
+           {deferredPrompt && !isInstalled && (
+               <button 
+                  onClick={() => {
+                      playSound('click');
+                      installApp();
+                  }} 
+                  className="group p-2.5 rounded-xl bg-sky-500 text-white border border-sky-400 hover:bg-sky-600 transition-all active:scale-95 hover:shadow-md flex items-center gap-2 shadow-lg shadow-sky-500/20"
+                  title={t('installApp')}
+               >
+                 <DownloadIcon className="w-5 h-5" strokeWidth={2.5} />
+                 <span className="hidden sm:inline font-bold text-xs uppercase tracking-wider">{t('install')}</span>
+               </button>
+           )}
+
            <button 
               onClick={() => {
                   playSound('click');
