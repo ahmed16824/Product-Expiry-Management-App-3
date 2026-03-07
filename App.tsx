@@ -146,7 +146,7 @@ const App: React.FC = () => {
                 let users: User[] = [];
 
                 try {
-                    const serverResponse = await fetch('/api/data');
+                    const serverResponse = await fetch(`/api/data?t=${Date.now()}`);
                     if (serverResponse.ok) {
                         const serverData = await serverResponse.json();
                         if (serverData.users.length > 0) {
@@ -477,17 +477,35 @@ const App: React.FC = () => {
         dispatch({ type: 'DELETE_COMPANY_PRODUCTS', payload: { companyName, unknownCompanyName: t('unknownCompany'), organizationId: currentUser!.organizationId } });
     }, [t, currentUser]);
 
-    const handleSaveUser = useCallback((user: User) => {
+    const handleSaveUser = useCallback(async (user: User) => {
         const userToSave = { ...user, organizationId: currentUser!.organizationId, organizationName: currentUser!.organizationName };
-        dispatch({ type: 'SAVE_USER', payload: userToSave });
-    }, [currentUser]);
+        try {
+            await fetch('/api/users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userToSave)
+            });
+            dispatch({ type: 'SAVE_USER', payload: userToSave });
+            addToast(t('userSaved') || 'User saved successfully.', 'success');
+        } catch (e) {
+            console.error("Failed to save user to server", e);
+            addToast("Failed to save user to server", 'error');
+        }
+    }, [currentUser, addToast, t]);
 
-    const handleDeleteUser = useCallback((userId: string) => {
-        dispatch({ type: 'DELETE_USER', payload: userId });
-        db.deleteItem(db.STORES.users, userId).catch(e => console.error("Failed to delete user from DB", e));
-    }, []);
+    const handleDeleteUser = useCallback(async (userId: string) => {
+        try {
+            await fetch(`/api/users/${userId}`, { method: 'DELETE' });
+            dispatch({ type: 'DELETE_USER', payload: userId });
+            db.deleteItem(db.STORES.users, userId).catch(e => console.error("Failed to delete user from DB", e));
+            addToast(t('userDeleted') || 'User deleted successfully.', 'success');
+        } catch (e) {
+            console.error("Failed to delete user from server", e);
+            addToast("Failed to delete user from server", 'error');
+        }
+    }, [addToast, t]);
     
-    const handleSignUp = useCallback((newUser: Pick<User, 'username' | 'password_HACK' | 'role' | 'organizationName'>, onFail: () => void) => {
+    const handleSignUp = useCallback(async (newUser: Pick<User, 'username' | 'password_HACK' | 'role' | 'organizationName'>, onFail: () => void) => {
         if (appData.users.some(u => u.username.toLowerCase() === newUser.username.toLowerCase())) {
             addToast(t('usernameAlreadyExists'), 'error');
             onFail();
@@ -499,9 +517,22 @@ const App: React.FC = () => {
             id: `user_${Date.now()}`,
             organizationId: orgId,
         };
-        dispatch({ type: 'SAVE_USER', payload: userToSave });
-        addToast(t('accountCreatedSuccess'), 'success');
-        login(userToSave);
+
+        try {
+            await fetch('/api/users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userToSave)
+            });
+            
+            dispatch({ type: 'SAVE_USER', payload: userToSave });
+            addToast(t('accountCreatedSuccess'), 'success');
+            login(userToSave);
+        } catch (e) {
+            console.error("Failed to save user to server", e);
+            addToast("Failed to create account on server", 'error');
+            onFail();
+        }
     }, [appData.users, addToast, t, login]);
 
     if (isLoadingData) {
