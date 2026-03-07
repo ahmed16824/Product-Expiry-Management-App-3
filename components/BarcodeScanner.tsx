@@ -36,6 +36,8 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanSuccess, onClose,
   const [isManualInputOpen, setIsManualInputOpen] = useState(false);
   const [manualCode, setManualCode] = useState('');
   
+  const [isProcessingFile, setIsProcessingFile] = useState(false);
+  
   const beepRef = useRef<HTMLAudioElement | null>(null);
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const isStartingRef = useRef(false);
@@ -47,11 +49,26 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanSuccess, onClose,
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setIsProcessingFile(true);
+    setError(null);
+
     try {
       // Stop the camera scanner if it's running to avoid conflicts
-      await stopScanner();
+      if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
+        try {
+          await html5QrCodeRef.current.stop();
+          setIsScanning(false);
+        } catch (err) {
+          console.warn("Failed to stop scanner before file scan", err);
+        }
+      }
+      
       // Small delay to ensure cleanup
       await new Promise(r => setTimeout(r, 100));
+
+      // Clear the element content to remove video element if any
+      const element = document.getElementById(containerId);
+      if (element) element.innerHTML = '';
 
       if (!html5QrCodeRef.current) {
          html5QrCodeRef.current = new Html5Qrcode(containerId);
@@ -64,11 +81,16 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanSuccess, onClose,
       if (!isInline) {
           onClose();
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error scanning file", err);
-      setError(t('errorScanningImage') || "Failed to read barcode from image");
+      if (typeof err === 'string' && err.includes("No QR code found")) {
+          setError(t('noBarcodeFoundInImage') || "No barcode found in this image");
+      } else {
+          setError(t('errorScanningImage') || "Failed to read barcode from image");
+      }
       playSound('error');
     } finally {
+        setIsProcessingFile(false);
         // Reset file input
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
@@ -415,10 +437,15 @@ const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScanSuccess, onClose,
 
           <button 
             onClick={triggerFileUpload}
-            className="w-14 h-14 flex items-center justify-center rounded-2xl bg-white/10 text-white backdrop-blur-md transition-all active:scale-90"
+            className="w-14 h-14 flex items-center justify-center rounded-2xl bg-white/10 text-white backdrop-blur-md transition-all active:scale-90 relative"
             title={t('scanImage')}
+            disabled={isProcessingFile}
           >
-            <ImageIcon className="w-6 h-6" />
+            {isProcessingFile ? (
+              <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+            ) : (
+              <ImageIcon className="w-6 h-6" />
+            )}
           </button>
           <input 
             type="file" 

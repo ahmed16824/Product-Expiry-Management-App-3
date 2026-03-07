@@ -215,6 +215,7 @@
   "keepCurrentBranch": "الاحتفاظ بالفرع الحالي",
   "scanImage": "مسح صورة",
   "errorScanningImage": "فشل قراءة الباركود من الصورة",
+  "noBarcodeFoundInImage": "لم يتم العثور على باركود في الصورة",
   "installApp": "تثبيت التطبيق",
   "installAppDesc": "أضف التطبيق إلى شاشتك الرئيسية للوصول السريع والعمل بدون إنترنت.",
   "install": "تثبيت",

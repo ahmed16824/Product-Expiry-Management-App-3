@@ -215,6 +215,7 @@
   "keepCurrentBranch": "Keep current branch",
   "scanImage": "Scan Image",
   "errorScanningImage": "Failed to read barcode from image",
+  "noBarcodeFoundInImage": "No barcode found in this image",
   "installApp": "Install App",
   "installAppDesc": "Add the app to your home screen for quick access and offline use.",
   "install": "Install",

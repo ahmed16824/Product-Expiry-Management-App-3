@@ -4,9 +4,11 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import path from "path";
 import { fileURLToPath } from "url";
+import fs from "fs/promises";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const DATA_FILE = path.join(__dirname, "server_data.json");
 
 async function startServer() {
   const app = express();
@@ -15,12 +17,28 @@ async function startServer() {
   app.use(cors());
   app.use(bodyParser.json({ limit: '50mb' }));
 
-  // In-memory store for demo purposes (In a real app, use a database like MongoDB or PostgreSQL)
-  // Since we want to sync across devices, we need a central store.
+  // In-memory store backed by file
   let globalData = {
     products: [] as any[],
     scannableProducts: [] as any[],
     users: [] as any[],
+  };
+
+  // Load data from file on startup
+  try {
+    const fileContent = await fs.readFile(DATA_FILE, 'utf-8');
+    globalData = JSON.parse(fileContent);
+    console.log("Loaded data from disk");
+  } catch (error) {
+    console.log("No existing data file, starting with empty store");
+  }
+
+  const saveData = async () => {
+    try {
+      await fs.writeFile(DATA_FILE, JSON.stringify(globalData, null, 2));
+    } catch (error) {
+      console.error("Failed to save data to disk", error);
+    }
   };
 
   // API Routes
@@ -28,19 +46,34 @@ async function startServer() {
     res.json(globalData);
   });
 
-  app.post("/api/sync", (req, res) => {
+  app.post("/api/sync", async (req, res) => {
     const { products, scannableProducts, users } = req.body;
     
-    // Simple merge logic: for users and scannable products, we keep unique ones.
-    // For products, we might need more complex logic, but for now, let's just replace or merge.
-    if (products) globalData.products = products;
-    if (scannableProducts) globalData.scannableProducts = scannableProducts;
-    if (users) globalData.users = users;
+    // Merge Logic
+    if (users && Array.isArray(users)) {
+        const userMap = new Map(globalData.users.map(u => [u.id, u]));
+        users.forEach(u => userMap.set(u.id, u));
+        globalData.users = Array.from(userMap.values());
+    }
 
-    res.json({ status: "ok", message: "Data synced successfully" });
+    if (scannableProducts && Array.isArray(scannableProducts)) {
+        // Key for scannable products is usually code + organizationId
+        const productMap = new Map(globalData.scannableProducts.map(p => [`${p.organizationId}-${p.code}`, p]));
+        scannableProducts.forEach(p => productMap.set(`${p.organizationId}-${p.code}`, p));
+        globalData.scannableProducts = Array.from(productMap.values());
+    }
+
+    if (products && Array.isArray(products)) {
+        const productMap = new Map(globalData.products.map(p => [p.id, p]));
+        products.forEach(p => productMap.set(p.id, p));
+        globalData.products = Array.from(productMap.values());
+    }
+
+    await saveData();
+    res.json({ status: "ok", message: "Data synced and merged successfully" });
   });
 
-  app.post("/api/users", (req, res) => {
+  app.post("/api/users", async (req, res) => {
     const user = req.body;
     const index = globalData.users.findIndex(u => u.id === user.id);
     if (index !== -1) {
@@ -48,11 +81,13 @@ async function startServer() {
     } else {
       globalData.users.push(user);
     }
+    await saveData();
     res.json({ status: "ok" });
   });
 
-  app.delete("/api/users/:id", (req, res) => {
+  app.delete("/api/users/:id", async (req, res) => {
     globalData.users = globalData.users.filter(u => u.id !== req.params.id);
+    await saveData();
     res.json({ status: "ok" });
   });
 
